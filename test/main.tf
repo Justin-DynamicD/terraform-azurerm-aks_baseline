@@ -20,7 +20,7 @@ module "myvnet" {
   subnets = {
     agw          = "10.10.10.0/26"
     aks_ingress  = "10.10.10.64/26"
-    aks_nodes    = "10.10.20.0/20"
+    aks_nodes    = "10.10.16.0/20"
     private_link = "10.10.10.128/26"
   }
   subnet_enforce_private_link_service_network_policies = {
@@ -30,7 +30,7 @@ module "myvnet" {
     private_link = ["Microsoft.KeyVault","Microsoft.ContainerRegistry"]
   }
   tags = {
-    Level   = "2"
+    CAF_Level   = "2"
     Terraform = true
   }
 }
