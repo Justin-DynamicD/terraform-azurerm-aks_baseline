@@ -11,7 +11,6 @@ variable global_settings {
 variable network {
   type        = object({
     agw_subnet_id      = string
-    agw_address_prefix = string
     aks_subnet_id      = string
     zones              = list(string)
   })

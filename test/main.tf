@@ -3,7 +3,7 @@ provider azurerm {
 }
 
 resource azurerm_resource_group "test" {
-  name = "test-virtual-network"
+  name = "test-aks-baseline"
   location = "westus2"
 }
 
@@ -30,7 +30,34 @@ module "myvnet" {
     private_link = ["Microsoft.KeyVault","Microsoft.ContainerRegistry"]
   }
   tags = {
-    CAF_Level   = "2"
+    Project   = "AKS Baseline"
+    CAF_Level = "2"
+    Terraform = true
+  }
+}
+
+module "aks" {
+  source = "../"
+  depends_on = [
+    azurerm_resource_group.test
+  ]
+  global_settings  = {
+    environment         = "test",
+    location            = azurerm_resource_group.test.location
+    name_prefix         = "testaks"
+    resource_group_name = azurerm_resource_group.test.name
+  }
+  network = {
+    agw_subnet_id      = module.myvnet.vnet_subnets["agw"].id
+    aks_subnet_id      = module.myvnet.vnet_subnets["aks_nodes"].id
+    zones              = ["1", "2", "3"]
+  }
+  # acr_list = {
+  #   hafdev = "az-haf-dev"
+  # }
+  tags = {
+    Project   = "AKS Baseline"
+    CAF_Level = "3"
     Terraform = true
   }
 }

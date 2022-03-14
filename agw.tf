@@ -48,12 +48,6 @@ resource "azurerm_application_gateway" "main" {
     name                 = "appGatewayFrontendIP"
     public_ip_address_id = azurerm_public_ip.main.id
   }
-  frontend_ip_configuration {
-    name                          = "appGatewayPrivateIP"
-    private_ip_address            = "${cidrhost(local.network.agw_address_prefix, local.app_gateway.private_ip_suffix)}"
-    private_ip_address_allocation = "Static"
-    subnet_id                     = local.network.agw_subnet_id
-  }
   backend_address_pool {
     name = "defaultaddresspool"
   }

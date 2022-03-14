@@ -23,9 +23,8 @@ resource "azurerm_kubernetes_cluster" "main" {
       log_analytics_workspace_id   = local.oms.workspace_id
     }
   }
-  role_based_access_control {
-    enabled = true
-  }
+  
+  role_based_access_control_enabled = true
 
   default_node_pool {
     name                = "default"

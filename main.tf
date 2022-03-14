@@ -13,7 +13,6 @@ locals {
     }
     network = {
       agw_subnet_id = ""
-      agw_address_prefix = ""
       aks_subnet_id = ""
       zones = []
     }
@@ -21,7 +20,6 @@ locals {
       sku_name = "WAF_v2"
       sku_tier = "WAF_v2"
       sku_capacity = "2"
-      private_ip_suffix = "10"
     }
     oms = {}
     aks = {
