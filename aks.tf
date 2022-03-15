@@ -6,16 +6,20 @@ resource "azurerm_kubernetes_cluster" "main" {
       default_node_pool[0].node_count
     ]
   }
-  name                             = "${local.global_settings.name_prefix}-${local.global_settings.environment}-aks"
-  location                         = local.global_settings.location
-  dns_prefix                       = "${local.global_settings.name_prefix}${local.global_settings.environment}aks"
-  resource_group_name              = data.azurerm_resource_group.source.name
-  sku_tier                         = local.aks.sku_tier
-  automatic_channel_upgrade        = local.aks.automatic_channel_upgrade
-  azure_policy_enabled             = local.aks.azure_policy
-  http_application_routing_enabled = false
+  name                              = "${local.global_settings.name_prefix}-${local.global_settings.environment}-aks"
+  location                          = local.global_settings.location
+  dns_prefix                        = "${local.global_settings.name_prefix}${local.global_settings.environment}aks"
+  resource_group_name               = data.azurerm_resource_group.source.name
+  sku_tier                          = local.aks.sku_tier
+  automatic_channel_upgrade         = local.aks.automatic_channel_upgrade
+  azure_policy_enabled              = local.aks.azure_policy
+  http_application_routing_enabled  = false
+  role_based_access_control_enabled = true
   ingress_application_gateway {
     gateway_id                     = azurerm_application_gateway.main.id
+  }
+  key_vault_secrets_provider {
+    secret_rotation_enabled  = false
   }
   dynamic "oms_agent" {
     for_each = local.oms != {} ? ["oms_agent"] : []
@@ -23,8 +27,6 @@ resource "azurerm_kubernetes_cluster" "main" {
       log_analytics_workspace_id   = local.oms.workspace_id
     }
   }
-  
-  role_based_access_control_enabled = true
 
   default_node_pool {
     name                = "default"
@@ -50,8 +52,8 @@ resource "azurerm_kubernetes_cluster" "main" {
   }
 
   tags = local.tags
-  depends_on = [
-    azurerm_role_assignment.agw,
-    azurerm_role_assignment.agwrg
-  ]
+  # depends_on = [
+  #   azurerm_role_assignment.agw,
+  #   azurerm_role_assignment.agwrg
+  # ]
 }

@@ -1,22 +1,12 @@
 #User Assigned Identities
-#  Creates an Azure Identity
+#  Creates an Azure Identity used in VNET joining
+#  and DNS updating
 
 resource "azurerm_user_assigned_identity" "main" {
   resource_group_name = local.global_settings.resource_group_name
   location            = local.global_settings.location
   name = "${local.global_settings.name_prefix}-${local.global_settings.environment}-aks"
   tags = local.tags
-}
-resource "azurerm_role_assignment" "agw" {
-  scope                = azurerm_application_gateway.main.id
-  role_definition_name = "Contributor"
-  principal_id         = azurerm_user_assigned_identity.main.principal_id
-}
-
-resource "azurerm_role_assignment" "agwrg" {
-  scope                = data.azurerm_resource_group.source.id
-  role_definition_name = "Reader"
-  principal_id         = azurerm_user_assigned_identity.main.principal_id
 }
 
 # grants AKS permissions to the listed registry
