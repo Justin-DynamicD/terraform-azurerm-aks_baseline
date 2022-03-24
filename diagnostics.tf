@@ -1,6 +1,6 @@
 # This enables diagnostic logging for aks
 resource "azurerm_monitor_diagnostic_setting" "main" {
-  count                      = local.oms != {} ? 1 : 0
+  count                      = local.oms.enabled == true ? 1 : 0
   name                       = "default policy"
   target_resource_id         = azurerm_kubernetes_cluster.main.id
   storage_account_id         = local.oms.storage_account_id
@@ -80,9 +80,9 @@ resource "azurerm_monitor_diagnostic_setting" "main" {
 
 # enable diagnostics for app gateway
 resource "azurerm_monitor_diagnostic_setting" "agw" {
-  count                      = local.oms != {} ? 1 : 0
+  count                      = (local.oms.enabled == true && local.app_gateway.enabled == true) ? 1 : 0
   name                       = "default policy"
-  target_resource_id         = azurerm_application_gateway.main.id
+  target_resource_id         = azurerm_application_gateway.main[0].id
   storage_account_id         = local.oms.storage_account_id
   log_analytics_workspace_id = local.oms.workspace_id
   log {

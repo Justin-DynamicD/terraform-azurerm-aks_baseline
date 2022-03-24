@@ -1,6 +1,7 @@
 # Public Ip
 resource "azurerm_public_ip" "main" {
-  name                = "${local.global_settings.name_prefix}-${local.global_settings.environment}-agw"
+  count               = local.app_gateway.enabled ? 1 : 0
+  name                = local.names.agw
   resource_group_name = local.global_settings.resource_group_name
   location            = local.global_settings.location
   allocation_method   = "Static"
@@ -27,10 +28,11 @@ resource "azurerm_application_gateway" "main" {
     ]
   }
 
-  name                = "${local.global_settings.name_prefix}-${local.global_settings.environment}-agw"
+  count               = local.app_gateway.enabled ? 1 : 0
+  name                = local.names.agw
   resource_group_name = local.global_settings.resource_group_name
   location            = local.global_settings.location
-  zones               = local.network.zones != [] ? local.network.zones : null
+  zones               = local.zones != [] ? local.zones : null
   sku {
     name     = local.app_gateway.sku_name
     tier     = local.app_gateway.sku_tier
@@ -38,7 +40,7 @@ resource "azurerm_application_gateway" "main" {
   }
   gateway_ip_configuration {
     name      = "appGatewayIpConfig"
-    subnet_id = local.network.agw_subnet_id
+    subnet_id = local.app_gateway.subnet_id
   }
   frontend_port {
     name = "defaulthttp"
@@ -46,7 +48,7 @@ resource "azurerm_application_gateway" "main" {
   }
   frontend_ip_configuration {
     name                 = "appGatewayFrontendIP"
-    public_ip_address_id = azurerm_public_ip.main.id
+    public_ip_address_id = azurerm_public_ip.main[0].id
   }
   backend_address_pool {
     name = "defaultaddresspool"

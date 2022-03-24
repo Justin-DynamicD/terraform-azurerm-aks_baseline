@@ -41,23 +41,24 @@ module "aks" {
   depends_on = [
     azurerm_resource_group.test
   ]
-  global_settings  = {
-    environment         = "test",
+  global_settings = {
     location            = azurerm_resource_group.test.location
     name_prefix         = "testaks"
     resource_group_name = azurerm_resource_group.test.name
   }
-  network = {
-    agw_subnet_id      = module.myvnet.vnet_subnets["agw"].id
-    aks_subnet_id      = module.myvnet.vnet_subnets["aks_nodes"].id
-    zones              = ["1", "2", "3"]
+  aks = {
+    os_disk_size_gb = 70
+    subnet_id       = module.myvnet.vnet_subnets["aks_nodes"].id
+    vm_size         = "Standard_D2ds_v5"
   }
-  # acr_list = {
-  #   hafdev = "az-haf-dev"
-  # }
+  app_gateway = {
+    enabled   = true
+    subnet_id = module.myvnet.vnet_subnets["agw"].id
+  }
   tags = {
     Project   = "AKS Baseline"
     CAF_Level = "3"
     Terraform = true
   }
+  zones = ["1", "2", "3"]
 }
