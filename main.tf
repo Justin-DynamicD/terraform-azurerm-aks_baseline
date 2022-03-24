@@ -4,45 +4,44 @@
 ######
 
 locals {
-  defaults = {
-    global_settings   = {
-      environment         = "dev",
-      location            = "West US 2"
-      name_prefix         = "devops"
-      resource_group_name = "sample"
-    }
-    network = {
-      agw_subnet_id = ""
-      aks_subnet_id = ""
-      zones = []
-    }
-    app_gateway = {
-      sku_name = "WAF_v2"
-      sku_tier = "WAF_v2"
-      sku_capacity = "2"
-    }
-    oms = {}
-    aks = {
-      sku_tier                  = "Free"
-      automatic_channel_upgrade = null
-      node_count                = 2
-      min_count                 = 1
-      max_count                 = 3
-      vm_size                   = "Standard_DS3_v2"
-      os_disk_size_gb           = 128
-      os_disk_type              = "Ephemeral"
-      docker_bridge_cidr        = "172.17.0.1/16"
-      azure_policy              = "true"
-    }
-    acr_list = {}
-    tags     = {}
+  aks = defaults(var.aks, {
+    automatic_channel_upgrade = ""
+    azure_policy              = true
+    docker_bridge_cidr        = "172.17.0.1/16"
+    max_count                 = 3
+    min_count                 = 1
+    name                      = ""
+    node_count                = 2
+    os_disk_size_gb           = 128
+    os_disk_type              = "Ephemeral"
+    sku_tier                  = "Free"
+    vm_size                   = "Standard_DS3_v2"
+  })
+  app_gateway = defaults(var.app_gateway, {
+    enabled      = false
+    name         = ""
+    sku_capacity = "2"
+    sku_name     = "WAF_v2"
+    sku_tier     = "WAF_v2"
+    subnet_id    = ""
+  })
+  global_settings = defaults(var.global_settings, {
+    name_prefix = "aks-baseline"
+  })
+  oms = defaults(var.oms, {
+    enabled            = false
+    storage_account_id = ""
+    workspace_id       = ""
+  })
+
+  # generate the resource names for everything based on the values offered
+  names = {
+    aks = coalesce(local.aks.name, "${local.global_settings.name_prefix}-aks")
+    agw = coalesce(local.app_gateway.name, "${local.global_settings.name_prefix}-agw")
   }
-  
-  global_settings   = merge(local.defaults.global_settings, var.global_settings)
-  network           = merge(local.defaults.network, var.network)
-  app_gateway       = merge(local.defaults.app_gateway, var.app_gateway)
-  aks               = merge(local.defaults.aks, var.aks)
-  oms               = merge(local.defaults.oms, var.oms)
-  acr_list          = merge(local.defaults.acr_list, var.acr_list)
-  tags              = merge(local.defaults.tags, { "Environment" = local.global_settings.environment }, var.tags)
+
+  # these are unmodified, just dropped into locals for cconsistency
+  acr_list        = var.acr_list
+  tags            = var.tags
+  zones           = var.zones
 }

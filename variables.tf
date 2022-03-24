@@ -3,53 +3,66 @@
 ######
 
 variable global_settings {
-  type        = map(any)
-  description = "map of global variables"
-  default     = null
-}
-
-variable network {
-  type        = object({
-    agw_subnet_id      = string
-    aks_subnet_id      = string
-    zones              = list(string)
+  type        = object ({
+    location            = string
+    name_prefix         = optional(string)
+    resource_group_name = string
   })
-  description = "custom object defining the network"
-  default     = null
+  description = "collection of global variables common to every resource"
 }
 
 variable app_gateway {
-  type        = map(any)
+  type        = object ({
+      enabled      = optional(bool)
+      name         = optional(string)
+      sku_capacity = optional(string)
+      sku_name     = optional(string)
+      sku_tier     = optional(string)
+      subnet_id    = optional(string)
+  })
   description = "map of all agw variables"
-  default     = null
+  default     = {}
 }
 
 variable aks {
-  type        = map(any)
+  type = object({
+    automatic_channel_upgrade = optional(string)
+    azure_policy              = optional(bool)
+    docker_bridge_cidr        = optional(string)
+    max_count                 = optional(number)
+    min_count                 = optional(number)
+    name                      = optional(string)
+    node_count                = optional(number)
+    os_disk_size_gb           = optional(number)
+    os_disk_type              = optional(string)
+    sku_tier                  = optional(string)
+    subnet_id                 = string
+    vm_size                   = optional(string)
+  })
   description = "map of all aks variables"
-  default     = null
 }
 
 variable oms {
   type = object({
-    storage_account_id   = string
-    storage_account_name = string
-    workspace_id         = string
-    workspace_name       = string
+    enabled              = optional(bool)
+    storage_account_id = optional(string)
+    workspace_id         = optional(string)
   })
   description = "custom object defining OMS variables"
-  default     = null
+  default = {}
 }
 variable acr_list {
   type        = map(any)
   description = "key/value map of acr name = resource group"
-  default     = null
+  nullable    = false
+  default     = {}
 }
 
 variable zones {
-  type        = map(any)
-  description = "map of all agw variables"
-  default     = null
+  type        = list(string)
+  description = "list of all supported AZs to deploy to, if available"
+  nullable    = false
+  default     = []
 }
 
 variable tags {
