@@ -15,6 +15,7 @@ variable app_gateway {
   type        = object ({
       enabled      = optional(bool)
       name         = optional(string)
+      public_ip_id = optional(string)
       sku_capacity = optional(string)
       sku_name     = optional(string)
       sku_tier     = optional(string)

@@ -20,6 +20,7 @@ locals {
   app_gateway = defaults(var.app_gateway, {
     enabled      = false
     name         = ""
+    public_ip_id = ""
     sku_capacity = "2"
     sku_name     = "WAF_v2"
     sku_tier     = "WAF_v2"
