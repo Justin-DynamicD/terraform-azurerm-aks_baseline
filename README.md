@@ -86,8 +86,6 @@ aks = {
 }
 ```
 
-
-
 ### app_gateway
 
 ```yaml
