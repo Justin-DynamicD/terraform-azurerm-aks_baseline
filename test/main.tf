@@ -47,9 +47,7 @@ module "aks" {
     resource_group_name = azurerm_resource_group.test.name
   }
   aks = {
-    os_disk_size_gb = 70
     subnet_id       = module.myvnet.vnet_subnets["aks_nodes"].id
-    vm_size         = "Standard_D2ds_v5"
   }
   app_gateway = {
     enabled   = true

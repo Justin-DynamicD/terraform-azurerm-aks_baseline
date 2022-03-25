@@ -40,12 +40,12 @@ resource "azurerm_kubernetes_cluster" "main" {
     os_disk_size_gb     = local.aks.os_disk_size_gb
     os_disk_type        = local.aks.os_disk_type
     vnet_subnet_id      = local.aks.subnet_id
-    availability_zones  = local.zones != [] ? local.zones : null
+    zones               = local.zones != [] ? local.zones : null
     tags                = local.tags
   }
   identity {
-    type                      = "UserAssigned"
-    user_assigned_identity_id = azurerm_user_assigned_identity.main.id
+    type         = "UserAssigned"
+    identity_ids = [azurerm_user_assigned_identity.main.id]
   }
   network_profile {
     network_plugin     = "azure"

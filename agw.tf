@@ -6,7 +6,7 @@ resource "azurerm_public_ip" "main" {
   location            = local.global_settings.location
   allocation_method   = "Static"
   sku                 = "Standard"
-  availability_zone   = "Zone-Redundant"
+  zones               = local.zones != [] ? local.zones : null
   tags                = var.tags
 }
 

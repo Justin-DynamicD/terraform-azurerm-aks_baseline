@@ -8,14 +8,14 @@ locals {
     automatic_channel_upgrade = ""
     azure_policy              = true
     docker_bridge_cidr        = "172.17.0.1/16"
-    max_count                 = 3
-    min_count                 = 1
+    max_count                 = 4
+    min_count                 = 3
     name                      = ""
-    node_count                = 2
-    os_disk_size_gb           = 128
+    node_count                = 3
+    os_disk_size_gb           = 70
     os_disk_type              = "Ephemeral"
     sku_tier                  = "Free"
-    vm_size                   = "Standard_DS3_v2"
+    vm_size                   = "Standard_D2ds_v5"
   })
   app_gateway = defaults(var.app_gateway, {
     enabled      = false
@@ -29,6 +29,17 @@ locals {
   global_settings = defaults(var.global_settings, {
     name_prefix = "aks-baseline"
   })
+  # node_pools = defaults(var.node_pools, {
+  #   {
+  #     enable_auto_scaling       = true
+  #     max_count                 = 4
+  #     min_count                 = 3
+  #     node_count                = 3
+  #     os_disk_size_gb           = 70
+  #     os_disk_type              = "Ephemeral"
+  #     vm_size                   = "Standard_D2ds_v5"
+  #   }
+  # })
   oms = defaults(var.oms, {
     enabled            = false
     storage_account_id = ""

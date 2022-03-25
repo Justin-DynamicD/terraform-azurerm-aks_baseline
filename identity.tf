@@ -36,12 +36,12 @@ resource "azurerm_role_assignment" "agwaks" {
   count                = local.app_gateway.enabled ? 1 : 0
   scope                = azurerm_application_gateway.main[0].id
   role_definition_name = "Contributor"
-  principal_id         = azurerm_kubernetes_cluster.main.addon_profile[0].ingress_application_gateway[0].ingress_application_gateway_identity[0].object_id
+  principal_id         = azurerm_kubernetes_cluster.main.ingress_application_gateway[0].ingress_application_gateway_identity[0].object_id
 }
 
 resource "azurerm_role_assignment" "agwaksrg" {
   count                = local.app_gateway.enabled ? 1 : 0
   scope                = data.azurerm_resource_group.source.id
   role_definition_name = "Reader"
-  principal_id         = azurerm_kubernetes_cluster.main.addon_profile[0].ingress_application_gateway[0].ingress_application_gateway_identity[0].object_id
+  principal_id         = azurerm_kubernetes_cluster.main.ingress_application_gateway[0].ingress_application_gateway_identity[0].object_id
 }
