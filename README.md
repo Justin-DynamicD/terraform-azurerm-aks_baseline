@@ -6,7 +6,7 @@ Unlike the the complete topology example that includes the required hub-and-spok
 
 | | [AKS Secure Baseline](https://github.com/mspnp/aks-secure-baseline) | This Module |
 |-----------------------------------------|-------|----------|
-| VIrtual Network hub-and-spoke           |  ✅   |    ❌    |
+| Virtual Network hub-and-spoke           |  ✅   |    ❌    |
 | Egress restriction using Azure Firewall |  ✅   |    ❌    |
 | Ingress Controller                      |  ✅   |    ✅    |
 | Azure Networking CNI                    |  ✅   |    ✅    |
