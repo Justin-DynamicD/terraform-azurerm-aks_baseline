@@ -72,20 +72,46 @@ global_settings = {
 ### aks
 
 ```yaml
-network = {
-  address_spaces = []
-  dns_servers    = []
+aks = {
+  automatic_channel_upgrade = ""
+  azure_policy              = true
+  docker_bridge_cidr        = "172.17.0.1/16"
+  max_count                 = 3
+  min_count                 = 1
+  name                      = ""
+  node_count                = 2
+  os_disk_size_gb           = 128
+  os_disk_type              = "Ephemeral"
+  sku_tier                  = "Free"
+  vm_size                   = "Standard_DS3_v2"
 }
 ```
 
-| name | type | required | default | description |
-| --- | --- | --- | --- | --- |
-| address_spaces | list(string) | yes | - | list of CIDR blocks for the vnet ex: "10.0.0.0/8" |
-| dns_servers | list(string) | no | [] | override Azure DNS servers with a defined set |
+
 
 ### app_gateway
 
+```yaml
+app_gateway = {
+  enabled      = false
+  name         = ""
+  public_ip_id = ""
+  sku_capacity = "2"
+  sku_name     = "WAF_v2"
+  sku_tier     = "WAF_v2"
+  subnet_id    = ""
+}
+```
+
 ### oms
+
+```yaml
+oms = {
+  enabled            = false
+  storage_account_id = ""
+  workspace_id       = ""
+  }
+```
 
 ### tags
 

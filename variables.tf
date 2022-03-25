@@ -3,7 +3,7 @@
 ######
 
 variable global_settings {
-  type        = object ({
+  type       = object ({
     location            = string
     name_prefix         = optional(string)
     resource_group_name = string
@@ -46,7 +46,7 @@ variable aks {
 variable oms {
   type = object({
     enabled              = optional(bool)
-    storage_account_id = optional(string)
+    storage_account_id   = optional(string)
     workspace_id         = optional(string)
   })
   description = "custom object defining OMS variables"
