@@ -29,17 +29,21 @@ locals {
   global_settings = defaults(var.global_settings, {
     name_prefix = "aks-baseline"
   })
-  # node_pools = defaults(var.node_pools, {
-  #   {
-  #     enable_auto_scaling       = true
-  #     max_count                 = 4
-  #     min_count                 = 3
-  #     node_count                = 3
-  #     os_disk_size_gb           = 70
-  #     os_disk_type              = "Ephemeral"
-  #     vm_size                   = "Standard_D2ds_v5"
-  #   }
-  # })
+  node_user_pool = defaults(var.node_user_pool, {
+    enabled             = true
+    enable_auto_scaling = true
+    max_count           = 2
+    min_count           = 5
+    mode                = "User"
+    name                = "user"
+    node_count          = 2
+    os_disk_size_gb     = 120
+    os_disk_type        = "Ephemeral"
+    priority            = "Regular"
+    eviction_policy     = "Delete"
+    spot_max_price      = -1
+    vm_size             = "Standard_DS3_v2"
+  })
   oms = defaults(var.oms, {
     enabled            = false
     storage_account_id = ""

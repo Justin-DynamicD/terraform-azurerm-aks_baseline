@@ -43,18 +43,23 @@ variable aks {
   description = "map of all aks variables"
 }
 
-variable node_pools {
-  type = map(object({
-    vm_size = string
+variable node_user_pool {
+  type = object({
+    enabled             = optional(bool)
     enable_auto_scaling = optional(bool)
     max_count           = optional(number)
     min_count           = optional(number)
+    mode                = optional(string)
+    name                = optional(string)
     node_count          = optional(number)
     os_disk_size_gb     = optional(number)
     os_disk_type        = optional(string)
+    priority            = optional(string)
+    eviction_policy     = optional(string)
+    spot_max_price      = optional(number)
     vm_size             = optional(string)
-  }))
-  description = "map of node pools for aks to create"
+  })
+  description = "node user pool for aks"
   default     = {}
 }
 

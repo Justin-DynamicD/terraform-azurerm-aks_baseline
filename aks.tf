@@ -1,4 +1,25 @@
-# see locals block for hardcoded names.
+# this local block follows Azure Documentation for node labels + taints
+# and contains thier configuration which is applied by priority
+# details: https://docs.microsoft.com/en-us/azure/aks/spot-node-pool
+
+locals {
+  aks_node_extra ={
+    Regular = {
+      labels = {}
+      taints = []
+    }
+    Spot = {
+      labels = {
+        "kubernetes.azure.com/scalesetpriority" = "spot"
+      }
+      taints =  [
+        "kubernetes.azure.com/scalesetpriority=spot:NoSchedule"
+      ]
+    }
+  }
+}
+
+
 resource "azurerm_kubernetes_cluster" "main" {
   lifecycle {
     # due to auto-scaling we need to ignore the nodecount after launch
@@ -51,4 +72,31 @@ resource "azurerm_kubernetes_cluster" "main" {
     network_plugin     = "azure"
   }
   tags = local.tags
+}
+
+resource "azurerm_kubernetes_cluster_node_pool" "user" {
+  # due to auto-scaling we need to ignore the nodecount after launch
+  lifecycle {
+    ignore_changes = [
+      node_count
+    ]
+  }
+  count                 = local.node_user_pool.enabled ? 1 : 0
+  enable_auto_scaling   = local.node_user_pool.enable_auto_scaling
+  kubernetes_cluster_id = azurerm_kubernetes_cluster.main.id
+  max_count             = local.node_user_pool.max_count
+  min_count             = local.node_user_pool.min_count
+  mode                  = local.node_user_pool.mode
+  name                  = local.node_user_pool.name
+  node_count            = local.node_user_pool.node_count
+  node_labels           = local.aks_node_extra[local.node_user_pool.priority].labels
+  node_taints           = local.aks_node_extra[local.node_user_pool.priority].taints
+  os_disk_size_gb       = local.node_user_pool.os_disk_size_gb
+  os_disk_type          = local.node_user_pool.os_disk_type
+  priority              = local.node_user_pool.priority
+  eviction_policy       = local.node_user_pool.priority == "Spot" ? local.node_user_pool.eviction_policy : null
+  spot_max_price        = local.node_user_pool.priority == "Spot" ? local.node_user_pool.spot_max_price : null
+  tags                  = local.tags
+  vm_size               = local.node_user_pool.vm_size
+  zones                 = local.zones != [] ? local.zones : null
 }
