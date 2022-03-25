@@ -1,6 +1,6 @@
 # Public Ip
 resource "azurerm_public_ip" "main" {
-  count               = local.app_gateway.enabled ? 1 : 0
+  count               = (local.app_gateway.enabled && local.app_gateway.public_ip_id == "") ? 1 : 0
   name                = local.names.agw
   resource_group_name = local.global_settings.resource_group_name
   location            = local.global_settings.location
@@ -48,7 +48,7 @@ resource "azurerm_application_gateway" "main" {
   }
   frontend_ip_configuration {
     name                 = "appGatewayFrontendIP"
-    public_ip_address_id = azurerm_public_ip.main[0].id
+    public_ip_address_id = local.app_gateway.public_ip_id == "" ? azurerm_public_ip.main[0].id : local.app_gateway.public_ip_id
   }
   backend_address_pool {
     name = "defaultaddresspool"
