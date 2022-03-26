@@ -8,7 +8,6 @@ Unlike the the complete topology example that includes the required hub-and-spok
 |-----------------------------------------|-------|----------|
 | Virtual Network hub-and-spoke           |  ✅   |    ❌    |
 | Egress restriction using Azure Firewall |  ✅   |    ❌    |
-| Ingress Controller                      |  ✅   |    ✅    |
 | Azure Networking CNI                    |  ✅   |    ✅    |
 | Azure Active Directory Pod Identity     |  ✅   |    ✅    |
 | Default Recomended Node config          |  ✅   |    ✅    |
@@ -16,7 +15,7 @@ Unlike the the complete topology example that includes the required hub-and-spok
 | Keyvault secrets provider               |  ✅   |    ✅    |
 | Azure Policy enabled                    |  ❌   |    ✅    |
 | Managed public IP option                |  ❌   |    ✅    |
-| log retention default connector         |  ❌   |    ✅    |
+| log retention rules                     |  ❌   |    ✅    |
 
 Each recomended integration is bundled into its own custom object block so it can be enabled/disabled as needed.  For example:
 
@@ -86,8 +85,6 @@ aks = {
   vm_size                   = "Standard_DS3_v2"
 }
 ```
-
-
 
 ### app_gateway
 

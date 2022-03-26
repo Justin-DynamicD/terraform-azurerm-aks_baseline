@@ -41,19 +41,21 @@ module "aks" {
   depends_on = [
     azurerm_resource_group.test
   ]
-  global_settings = {
-    location            = azurerm_resource_group.test.location
-    name_prefix         = "testaks"
-    resource_group_name = azurerm_resource_group.test.name
-  }
-  aks = {
-    os_disk_size_gb = 70
-    subnet_id       = module.myvnet.vnet_subnets["aks_nodes"].id
-    vm_size         = "Standard_D2ds_v5"
-  }
+  location            = azurerm_resource_group.test.location
+  name_prefix         = "testaks"
+  resource_group_name = azurerm_resource_group.test.name
+  subnet_id           = module.myvnet.vnet_subnets["aks_nodes"].id
   app_gateway = {
     enabled   = true
     subnet_id = module.myvnet.vnet_subnets["agw"].id
+  }
+  node_default_pool = {
+    min_count  = 1
+    node_count = 1
+  }
+  node_user_pool = {
+    min_count  = 1
+    node_count = 1
   }
   tags = {
     Project   = "AKS Baseline"

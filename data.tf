@@ -8,7 +8,7 @@
 # data "azurerm_client_config" "current" {}
 
 data "azurerm_resource_group" "source" {
-  name = local.global_settings.resource_group_name
+  name = local.resource_group_name
 }
 
 data "azurerm_container_registry" "list" {

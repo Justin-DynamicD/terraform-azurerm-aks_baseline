@@ -1,4 +1,25 @@
-# see locals block for hardcoded names.
+# this local block follows Azure Documentation for node labels + taints
+# and contains thier configuration which is applied by priority
+# details: https://docs.microsoft.com/en-us/azure/aks/spot-node-pool
+
+locals {
+  aks_node_extra ={
+    Regular = {
+      labels = {}
+      taints = []
+    }
+    Spot = {
+      labels = {
+        "kubernetes.azure.com/scalesetpriority" = "spot"
+      }
+      taints =  [
+        "kubernetes.azure.com/scalesetpriority=spot:NoSchedule"
+      ]
+    }
+  }
+}
+
+
 resource "azurerm_kubernetes_cluster" "main" {
   lifecycle {
     # due to auto-scaling we need to ignore the nodecount after launch
@@ -7,12 +28,12 @@ resource "azurerm_kubernetes_cluster" "main" {
     ]
   }
   name                              = local.names.aks
-  location                          = local.global_settings.location
+  location                          = local.location
   dns_prefix                        = replace(local.names.aks, "-", "")
   resource_group_name               = data.azurerm_resource_group.source.name
-  sku_tier                          = local.aks.sku_tier
-  automatic_channel_upgrade         = local.aks.automatic_channel_upgrade != "" ? local.aks.automatic_channel_upgrade : null
-  azure_policy_enabled              = local.aks.azure_policy
+  sku_tier                          = local.sku_tier
+  automatic_channel_upgrade         = local.automatic_channel_upgrade != "" ? local.automatic_channel_upgrade : null
+  azure_policy_enabled              = local.azure_policy
   http_application_routing_enabled  = false
   role_based_access_control_enabled = true
   dynamic "ingress_application_gateway" {
@@ -31,24 +52,52 @@ resource "azurerm_kubernetes_cluster" "main" {
     }
   }
   default_node_pool {
-    name                = "default"
-    enable_auto_scaling = true
-    node_count          = local.aks.node_count
-    min_count           = local.aks.min_count
-    max_count           = local.aks.max_count
-    vm_size             = local.aks.vm_size
-    os_disk_size_gb     = local.aks.os_disk_size_gb
-    os_disk_type        = local.aks.os_disk_type
-    vnet_subnet_id      = local.aks.subnet_id
-    availability_zones  = local.zones != [] ? local.zones : null
-    tags                = local.tags
+    enable_auto_scaling          = local.node_default_pool.enable_auto_scaling
+    max_count                    = local.node_default_pool.max_count
+    min_count                    = local.node_default_pool.min_count
+    name                         = local.node_default_pool.name
+    node_count                   = local.node_default_pool.node_count
+    only_critical_addons_enabled = local.node_default_pool.only_critical_addons_enabled
+    os_disk_size_gb              = local.node_default_pool.os_disk_size_gb
+    os_disk_type                 = local.node_default_pool.os_disk_type
+    tags                         = local.tags
+    vm_size                      = local.node_default_pool.vm_size
+    vnet_subnet_id               = local.subnet_id
+    zones                        = local.zones != [] ? local.zones : null
   }
   identity {
-    type                      = "UserAssigned"
-    user_assigned_identity_id = azurerm_user_assigned_identity.main.id
+    type         = "UserAssigned"
+    identity_ids = [azurerm_user_assigned_identity.main.id]
   }
   network_profile {
     network_plugin     = "azure"
   }
   tags = local.tags
+}
+
+resource "azurerm_kubernetes_cluster_node_pool" "user" {
+  # due to auto-scaling we need to ignore the nodecount after launch
+  lifecycle {
+    ignore_changes = [
+      node_count
+    ]
+  }
+  count                 = local.node_user_pool.enabled ? 1 : 0
+  enable_auto_scaling   = local.node_user_pool.enable_auto_scaling
+  kubernetes_cluster_id = azurerm_kubernetes_cluster.main.id
+  max_count             = local.node_user_pool.max_count
+  min_count             = local.node_user_pool.min_count
+  mode                  = local.node_user_pool.mode
+  name                  = local.node_user_pool.name
+  node_count            = local.node_user_pool.node_count
+  node_labels           = local.aks_node_extra[local.node_user_pool.priority].labels
+  node_taints           = local.aks_node_extra[local.node_user_pool.priority].taints
+  os_disk_size_gb       = local.node_user_pool.os_disk_size_gb
+  os_disk_type          = local.node_user_pool.os_disk_type
+  priority              = local.node_user_pool.priority
+  eviction_policy       = local.node_user_pool.priority == "Spot" ? local.node_user_pool.eviction_policy : null
+  spot_max_price        = local.node_user_pool.priority == "Spot" ? local.node_user_pool.spot_max_price : null
+  tags                  = local.tags
+  vm_size               = local.node_user_pool.vm_size
+  zones                 = local.zones != [] ? local.zones : null
 }
