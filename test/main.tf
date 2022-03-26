@@ -44,12 +44,18 @@ module "aks" {
   location            = azurerm_resource_group.test.location
   name_prefix         = "testaks"
   resource_group_name = azurerm_resource_group.test.name
-  aks = {
-    subnet_id       = module.myvnet.vnet_subnets["aks_nodes"].id
-  }
+  subnet_id           = module.myvnet.vnet_subnets["aks_nodes"].id
   app_gateway = {
     enabled   = true
     subnet_id = module.myvnet.vnet_subnets["agw"].id
+  }
+  node_default_pool = {
+    min_count  = 1
+    node_count = 1
+  }
+  node_user_pool = {
+    min_count  = 1
+    node_count = 1
   }
   tags = {
     Project   = "AKS Baseline"

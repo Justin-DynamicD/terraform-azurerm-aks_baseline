@@ -19,7 +19,7 @@ resource "azurerm_role_assignment" "attach_acr" {
 
 # grants rights to the built role as well as the subnet (only needed for kubenet, but added for completeness)
 resource "azurerm_role_assignment" "subnet" {
-    scope                = local.aks.subnet_id
+    scope                = local.subnet_id
     role_definition_name = "Network Contributor"
     principal_id         = azurerm_kubernetes_cluster.main.kubelet_identity[0].object_id
 }

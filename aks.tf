@@ -31,9 +31,9 @@ resource "azurerm_kubernetes_cluster" "main" {
   location                          = local.location
   dns_prefix                        = replace(local.names.aks, "-", "")
   resource_group_name               = data.azurerm_resource_group.source.name
-  sku_tier                          = local.aks.sku_tier
-  automatic_channel_upgrade         = local.aks.automatic_channel_upgrade != "" ? local.aks.automatic_channel_upgrade : null
-  azure_policy_enabled              = local.aks.azure_policy
+  sku_tier                          = local.sku_tier
+  automatic_channel_upgrade         = local.automatic_channel_upgrade != "" ? local.automatic_channel_upgrade : null
+  azure_policy_enabled              = local.azure_policy
   http_application_routing_enabled  = false
   role_based_access_control_enabled = true
   dynamic "ingress_application_gateway" {
@@ -52,17 +52,18 @@ resource "azurerm_kubernetes_cluster" "main" {
     }
   }
   default_node_pool {
-    name                = "default"
-    enable_auto_scaling = true
-    node_count          = local.aks.node_count
-    min_count           = local.aks.min_count
-    max_count           = local.aks.max_count
-    vm_size             = local.aks.vm_size
-    os_disk_size_gb     = local.aks.os_disk_size_gb
-    os_disk_type        = local.aks.os_disk_type
-    vnet_subnet_id      = local.aks.subnet_id
-    zones               = local.zones != [] ? local.zones : null
-    tags                = local.tags
+    enable_auto_scaling          = local.node_default_pool.enable_auto_scaling
+    max_count                    = local.node_default_pool.max_count
+    min_count                    = local.node_default_pool.min_count
+    name                         = local.node_default_pool.name
+    node_count                   = local.node_default_pool.node_count
+    only_critical_addons_enabled = local.node_default_pool.only_critical_addons_enabled
+    os_disk_size_gb              = local.node_default_pool.os_disk_size_gb
+    os_disk_type                 = local.node_default_pool.os_disk_type
+    tags                         = local.tags
+    vm_size                      = local.node_default_pool.vm_size
+    vnet_subnet_id               = local.subnet_id
+    zones                        = local.zones != [] ? local.zones : null
   }
   identity {
     type         = "UserAssigned"
