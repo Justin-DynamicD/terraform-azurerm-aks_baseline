@@ -2,13 +2,21 @@
 # global variables
 ######
 
-variable global_settings {
-  type       = object ({
-    location            = string
-    name_prefix         = optional(string)
-    resource_group_name = string
-  })
-  description = "collection of global variables common to every resource"
+variable location {
+  type        = string
+  description = "region to build all resources in"
+}
+
+variable name_prefix {
+  type        = string
+  description = "the prefix used in any generated resource name, if no overriding name is specified"
+  nullable    = false
+  default     = "aks-baseline"
+}
+
+variable resource_group_name {
+  type        = string
+  description = "name of the resource group to provision in"
 }
 
 variable app_gateway {

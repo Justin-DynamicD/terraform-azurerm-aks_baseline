@@ -3,8 +3,8 @@
 #  and DNS updating
 
 resource "azurerm_user_assigned_identity" "main" {
-  resource_group_name = local.global_settings.resource_group_name
-  location            = local.global_settings.location
+  resource_group_name = local.resource_group_name
+  location            = local.location
   name                = local.names.aks
   tags                = local.tags
 }

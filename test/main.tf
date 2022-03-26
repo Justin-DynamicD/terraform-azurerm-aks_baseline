@@ -41,11 +41,9 @@ module "aks" {
   depends_on = [
     azurerm_resource_group.test
   ]
-  global_settings = {
-    location            = azurerm_resource_group.test.location
-    name_prefix         = "testaks"
-    resource_group_name = azurerm_resource_group.test.name
-  }
+  location            = azurerm_resource_group.test.location
+  name_prefix         = "testaks"
+  resource_group_name = azurerm_resource_group.test.name
   aks = {
     subnet_id       = module.myvnet.vnet_subnets["aks_nodes"].id
   }

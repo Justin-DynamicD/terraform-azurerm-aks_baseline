@@ -28,7 +28,7 @@ resource "azurerm_kubernetes_cluster" "main" {
     ]
   }
   name                              = local.names.aks
-  location                          = local.global_settings.location
+  location                          = local.location
   dns_prefix                        = replace(local.names.aks, "-", "")
   resource_group_name               = data.azurerm_resource_group.source.name
   sku_tier                          = local.aks.sku_tier

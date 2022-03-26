@@ -2,8 +2,8 @@
 resource "azurerm_public_ip" "main" {
   count               = (local.app_gateway.enabled && local.app_gateway.public_ip_id == "") ? 1 : 0
   name                = local.names.agw
-  resource_group_name = local.global_settings.resource_group_name
-  location            = local.global_settings.location
+  resource_group_name = local.resource_group_name
+  location            = local.location
   allocation_method   = "Static"
   sku                 = "Standard"
   zones               = local.zones != [] ? local.zones : null
@@ -30,8 +30,8 @@ resource "azurerm_application_gateway" "main" {
 
   count               = local.app_gateway.enabled ? 1 : 0
   name                = local.names.agw
-  resource_group_name = local.global_settings.resource_group_name
-  location            = local.global_settings.location
+  resource_group_name = local.resource_group_name
+  location            = local.location
   zones               = local.zones != [] ? local.zones : null
   sku {
     name     = local.app_gateway.sku_name

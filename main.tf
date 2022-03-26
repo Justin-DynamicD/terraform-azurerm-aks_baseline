@@ -26,9 +26,6 @@ locals {
     sku_tier     = "WAF_v2"
     subnet_id    = ""
   })
-  global_settings = defaults(var.global_settings, {
-    name_prefix = "aks-baseline"
-  })
   node_user_pool = defaults(var.node_user_pool, {
     enabled             = true
     enable_auto_scaling = true
@@ -52,12 +49,14 @@ locals {
 
   # generate the resource names for everything based on the values offered
   names = {
-    aks = coalesce(local.aks.name, "${local.global_settings.name_prefix}-aks")
-    agw = coalesce(local.app_gateway.name, "${local.global_settings.name_prefix}-agw")
+    aks = coalesce(local.aks.name, "${var.name_prefix}-aks")
+    agw = coalesce(local.app_gateway.name, "${var.name_prefix}-agw")
   }
 
   # these are unmodified, just dropped into locals for cconsistency
-  acr_list        = var.acr_list
-  tags            = var.tags
-  zones           = var.zones
+  acr_list            = var.acr_list
+  location            = var.location
+  resource_group_name = var.resource_group_name
+  tags                = var.tags
+  zones               = var.zones
 }
