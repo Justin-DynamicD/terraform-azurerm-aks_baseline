@@ -55,6 +55,7 @@ variable node_user_pool {
 variable oms {
   type = object({
     enabled              = optional(bool)
+    retention_days       = optional(number)
     storage_account_id   = optional(string)
     workspace_id         = optional(string)
   })

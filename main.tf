@@ -41,6 +41,7 @@ locals {
   })
   oms = defaults(var.oms, {
     enabled            = false
+    retention_days     = 30
     storage_account_id = ""
     workspace_id       = ""
   })

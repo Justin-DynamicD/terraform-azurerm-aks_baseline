@@ -10,7 +10,7 @@ resource "azurerm_monitor_diagnostic_setting" "main" {
     enabled  = true
     retention_policy {
       enabled = true
-      days    = 30
+      days    = local.oms.retention_days
     }
   }
 
@@ -19,7 +19,7 @@ resource "azurerm_monitor_diagnostic_setting" "main" {
     enabled  = true
     retention_policy {
       enabled = true
-      days    = 30
+      days    = local.oms.retention_days
     }
   }
 
@@ -28,7 +28,7 @@ resource "azurerm_monitor_diagnostic_setting" "main" {
     enabled  = true
     retention_policy {
       enabled = true
-      days    = 30
+      days    = local.oms.retention_days
     }
   }
 
@@ -37,7 +37,7 @@ resource "azurerm_monitor_diagnostic_setting" "main" {
     enabled  = true
     retention_policy {
       enabled = true
-      days    = 30
+      days    = local.oms.retention_days
     }
   }
 
@@ -46,7 +46,7 @@ resource "azurerm_monitor_diagnostic_setting" "main" {
     enabled  = false
     retention_policy {
       enabled = false
-      days    = 0
+      days    = local.oms.retention_days
     }
   }
 
@@ -55,7 +55,7 @@ resource "azurerm_monitor_diagnostic_setting" "main" {
     enabled  = true
     retention_policy {
       enabled = true
-      days    = 30
+      days    = local.oms.retention_days
     }
   }
 
@@ -64,7 +64,7 @@ resource "azurerm_monitor_diagnostic_setting" "main" {
     enabled  = false
     retention_policy {
       enabled = false
-      days    = 0
+      days    = local.oms.retention_days
     }
   }
 
@@ -73,7 +73,7 @@ resource "azurerm_monitor_diagnostic_setting" "main" {
     enabled  = true
     retention_policy {
       enabled = true
-      days    = 30
+      days    = local.oms.retention_days
     }
   }
 }
@@ -90,7 +90,7 @@ resource "azurerm_monitor_diagnostic_setting" "agw" {
     enabled  = true
     retention_policy {
       enabled = true
-      days    = 30
+      days    = local.oms.retention_days
     }
   }
 
@@ -99,7 +99,7 @@ resource "azurerm_monitor_diagnostic_setting" "agw" {
     enabled  = true
     retention_policy {
       enabled = true
-      days    = 30
+      days    = local.oms.retention_days
     }
   }
 
@@ -108,7 +108,7 @@ resource "azurerm_monitor_diagnostic_setting" "agw" {
     enabled  = true
     retention_policy {
       enabled = true
-      days    = 30
+      days    = local.oms.retention_days
     }
   }
 
@@ -117,7 +117,7 @@ resource "azurerm_monitor_diagnostic_setting" "agw" {
     enabled  = true
     retention_policy {
       enabled = true
-      days    = 30
+      days    = local.oms.retention_days
     }
   }
 }
