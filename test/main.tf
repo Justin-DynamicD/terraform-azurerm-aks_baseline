@@ -1,10 +1,50 @@
 provider azurerm {
-  features{}
+  features {
+    resource_group {
+      prevent_deletion_if_contains_resources = false
+    }
+  }
 }
 
+# resource group to place everything in
 resource azurerm_resource_group "test" {
   name = "test-aks-baseline"
   location = "westus2"
+}
+
+# oms resources to connect to
+resource "azurerm_log_analytics_workspace" "main" {
+  name                = "test-la"
+  location            = azurerm_resource_group.test.location
+  resource_group_name = azurerm_resource_group.test.name
+  sku                 = "PerGB2018"
+}
+
+resource "random_string" "nameSuffix" {
+  length  = 8
+  special = false
+  upper   = false
+}
+
+resource "azurerm_storage_account" "main" {
+  name                            = "testla${random_string.nameSuffix.result}" # keeps the global name unique to avoid collisions
+  resource_group_name             = azurerm_resource_group.test.name
+  location                        = azurerm_resource_group.test.location
+  account_tier                    = "Standard"
+  account_replication_type        = "RAGRS"
+  allow_nested_items_to_be_public = true
+}
+
+resource "azurerm_log_analytics_solution" "containerinsights" {
+    solution_name         = "ContainerInsights"
+    location              = azurerm_log_analytics_workspace.main.location
+    resource_group_name   = azurerm_resource_group.test.name
+    workspace_resource_id = azurerm_log_analytics_workspace.main.id
+    workspace_name        = azurerm_log_analytics_workspace.main.name
+    plan {
+        publisher = "Microsoft"
+        product   = "OMSGallery/ContainerInsights"
+    }
 }
 
 module "myvnet" {
@@ -39,7 +79,10 @@ module "myvnet" {
 module "aks" {
   source = "../"
   depends_on = [
-    azurerm_resource_group.test
+    azurerm_resource_group.test,
+    azurerm_log_analytics_workspace.main,
+    azurerm_storage_account.main,
+    azurerm_log_analytics_solution.containerinsights
   ]
   location            = azurerm_resource_group.test.location
   name_prefix         = "testaks"
@@ -56,6 +99,14 @@ module "aks" {
   node_user_pool = {
     min_count  = 1
     node_count = 1
+  }
+  oms = {
+    enabled            = true
+    # aks_logs = {
+    #   guard = true
+    # }
+    storage_account_id = azurerm_storage_account.main.id
+    workspace_id       = azurerm_log_analytics_workspace.main.id
   }
   tags = {
     Project   = "AKS Baseline"

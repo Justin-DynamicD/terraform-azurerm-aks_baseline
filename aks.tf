@@ -99,5 +99,6 @@ resource "azurerm_kubernetes_cluster_node_pool" "user" {
   spot_max_price        = local.node_user_pool.priority == "Spot" ? local.node_user_pool.spot_max_price : null
   tags                  = local.tags
   vm_size               = local.node_user_pool.vm_size
+  vnet_subnet_id        = local.subnet_id # must be defined or terraform will redeploy despite documentation stating optional
   zones                 = local.zones != [] ? local.zones : null
 }

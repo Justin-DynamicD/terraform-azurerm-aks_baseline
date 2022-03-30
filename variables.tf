@@ -55,11 +55,32 @@ variable node_user_pool {
 variable oms {
   type = object({
     enabled              = optional(bool)
+    agw_logs             = optional(object({
+      ApplicationGatewayAccessLog      = optional(bool)
+      ApplicationGatewayPerformanceLog = optional(bool)
+      ApplicationGatewayFirewallLog    = optional(bool)
+    }))
+    agw_metrics          = optional(bool)
+    aks_logs             = optional(object({
+      cloud-controller-manager         = optional(bool)
+      csi-azuredisk-controller         = optional(bool)
+      csi-azurefile-controller         = optional(bool)
+      csi-snapshot-controller          = optional(bool)
+      kube-apiserver                   = optional(bool)
+      kube-audit                       = optional(bool)
+      kube-audit-admin                 = optional(bool)
+      kube-controller-manager          = optional(bool)
+      kube-scheduler                   = optional(bool)
+      cluster-autoscaler               = optional(bool)
+      guard                            = optional(bool)
+    }))
+    aks_metrics          = optional(bool)
+    retention_days       = optional(number)
     storage_account_id   = optional(string)
     workspace_id         = optional(string)
   })
   description = "custom object defining OMS variables"
-  default = {}
+  #default = {}
 }
 
 variable acr_list {

@@ -11,11 +11,14 @@ Unlike the the complete topology example that includes the required hub-and-spok
 | Azure Networking CNI                    |  ✅   |    ✅    |
 | Azure Active Directory Pod Identity     |  ✅   |    ✅    |
 | Default Recomended Node config          |  ✅   |    ✅    |
+| log retention rules                     |  ✅   |    ✅    |
 | App Gateway/WAF                         |  ✅   |    ✅    |
 | Keyvault secrets provider               |  ✅   |    ✅    |
 | Azure Policy enabled                    |  ❌   |    ✅    |
 | Managed public IP option                |  ❌   |    ✅    |
-| log retention rules                     |  ❌   |    ✅    |
+| Integrated Traefik Controller           |  ❌   |    ✅    |
+| Managed public IP option                |  ❌   |    ✅    |
+
 
 Each recomended integration is bundled into its own custom object block so it can be enabled/disabled as needed.  For example:
 
