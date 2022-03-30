@@ -4,6 +4,39 @@
 ######
 
 locals {
+  # weird behavior with complex merge types, so to clean it up I make a default value then merge,
+  # thus ignoring the defaults function that accepts null values
+  defaults = {
+    agw_logs  = {
+      ApplicationGatewayAccessLog      = true
+      ApplicationGatewayPerformanceLog = true
+      ApplicationGatewayFirewallLog    = true
+    }
+    aks_logs  = {
+      cloud-controller-manager         = false
+      cluster-autoscaler               = true
+      csi-azuredisk-controller         = false
+      csi-azurefile-controller         = false
+      csi-snapshot-controller          = false
+      guard                            = false
+      kube-apiserver                   = true
+      kube-audit                       = true
+      kube-audit-admin                 = true
+      kube-controller-manager          = true
+      kube-scheduler                   = false
+    }
+  }
+  # here we iterate over the optional fields that pass as null and remove them
+  clean_agw_logs = var.oms.agw_logs != null ? { for k, v in var.oms.agw_logs : k => v if v != null } : {}
+  clean_aks_logs = var.oms.aks_logs != null ? { for k, v in var.oms.aks_logs : k => v if v != null } : {}
+
+  # now we store these merged values for use.
+  merged_objects = {
+    agw_logs  = merge(local.defaults.agw_logs, local.clean_agw_logs)
+    aks_logs  = merge(local.defaults.aks_logs, local.clean_aks_logs)
+  }
+
+  # regular defaults below
   app_gateway = defaults(var.app_gateway, {
     enabled      = false
     name         = ""
@@ -41,6 +74,29 @@ locals {
   })
   oms = defaults(var.oms, {
     enabled            = false
+    # these sub-attributes don't apply properly, so while the values are here, they are useless
+    # until behavior is patched/refactored
+    # https://github.com/hashicorp/terraform/issues/28406
+    agw_logs           = {
+      ApplicationGatewayAccessLog      = true
+      ApplicationGatewayPerformanceLog = true
+      ApplicationGatewayFirewallLog    = true
+    }
+    agw_metrics        = true
+    aks_logs           = {
+      cloud-controller-manager         = false
+      csi-azuredisk-controller         = false
+      csi-azurefile-controller         = false
+      csi-snapshot-controller          = false
+      kube-apiserver                   = true
+      kube-audit                       = true
+      kube-audit-admin                 = true
+      kube-controller-manager          = true
+      kube-scheduler                   = false
+      cluster-autoscaler               = true
+      guard                            = false
+    }
+    aks_metrics        = true
     retention_days     = 30
     storage_account_id = ""
     workspace_id       = ""

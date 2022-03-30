@@ -102,6 +102,9 @@ module "aks" {
   }
   oms = {
     enabled            = true
+    # aks_logs = {
+    #   guard = true
+    # }
     storage_account_id = azurerm_storage_account.main.id
     workspace_id       = azurerm_log_analytics_workspace.main.id
   }
