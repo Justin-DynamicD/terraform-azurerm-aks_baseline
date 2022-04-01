@@ -114,7 +114,7 @@ The node user pool refers to a dedicated pool for customer workloads, following 
 > note: if `enabled = false`, be sure to set `only_critical_addons_enabled = false` in the default pool to ensure user workloads have a place to run.
 
 ```yaml
-node_default_pool = {
+node_user_pool = {
   enable_auto_scaling = true
   enabled             = true
   eviction_policy     = "Delete"
