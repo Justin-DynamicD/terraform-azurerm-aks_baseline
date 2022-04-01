@@ -58,8 +58,9 @@ locals {
     vm_size                      = "Standard_D2ds_v5"
   })
   node_user_pool = defaults(var.node_user_pool, {
-    enabled             = true
     enable_auto_scaling = true
+    enabled             = true
+    eviction_policy     = "Delete"
     max_count           = 5
     min_count           = 2
     mode                = "User"
@@ -68,7 +69,6 @@ locals {
     os_disk_size_gb     = 120
     os_disk_type        = "Ephemeral"
     priority            = "Regular"
-    eviction_policy     = "Delete"
     spot_max_price      = -1
     vm_size             = "Standard_D4ds_v5"
   })
