@@ -24,6 +24,7 @@ resource "azurerm_application_gateway" "main" {
       request_routing_rule,
       ssl_certificate,
       tags,
+      waf_configuration,
       url_path_map
     ]
   }
@@ -72,6 +73,19 @@ resource "azurerm_application_gateway" "main" {
     http_listener_name         = "defaultlistener"
     backend_address_pool_name  = "defaultaddresspool"
     backend_http_settings_name = "defaulthttpsetting"
+    priority                   = local.priority != -1 ? local.priority : null
+  }
+  dynamic "waf_configuration" {
+    for_each = length(regexall("^WAF", var.app_gateway.sku_tier)) > 0 ? ["waf_configuration"] : []
+    content {
+      enabled                  = local.waf_configuration.enabled
+      firewall_mode            = local.waf_configuration.firewall_mode
+      rule_set_type            = local.waf_configuration.rule_set_type
+      rule_set_version         = local.waf_configuration.rule_set_version
+      file_upload_limit_mb     = local.waf_configuration.file_upload_limit_mb
+      request_body_check       = local.waf_configuration.request_body_check
+      max_request_body_size_kb = local.waf_configuration.max_request_body_size_kb
+    }
   }
   tags = local.tags
 }
