@@ -7,7 +7,7 @@ resource "azurerm_monitor_diagnostic_setting" "aks" {
   log_analytics_workspace_id = local.oms.workspace_id
 
   dynamic "log" {
-    for_each = local.merged_objects.aks_logs
+    for_each = local.oms.aks_logs
     content {
       category = log.key
       enabled  = log.value
@@ -37,7 +37,7 @@ resource "azurerm_monitor_diagnostic_setting" "agw" {
   log_analytics_workspace_id = local.oms.workspace_id
 
   dynamic "log" {
-    for_each = local.merged_objects.agw_logs
+    for_each = local.oms.agw_logs
     content {
       category = log.key
       enabled  = log.value

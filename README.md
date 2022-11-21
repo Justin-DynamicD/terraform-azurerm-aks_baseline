@@ -2,7 +2,7 @@
 
 This module bundles together the recomendations outlined in the [Azure AKS baseline](https://docs.microsoft.com/en-us/azure/architecture/reference-architectures/containers/aks/secure-baseline-aks) to result in a starting infrastructure that can be deployed easily.
 
-Unlike the the complete topology example that includes the required hub-and-spoke network and log analytics in place, this module focuses soley on AKS and it's imediate recomended integrations.  Other modules exist that can help with the creation of the VNETs and subnets, so rather than repeat that effort, this module builds the following:
+Unlike the the complete topology example that includes the required hub-and-spoke network and log analytics in place, this module focuses soley on AKS and it's immediate recomended integrations.  Other modules exist that can help with the creation of the VNETs and subnets, so rather than repeat that effort, this module builds the following:
 
 | | [AKS Secure Baseline](https://github.com/mspnp/aks-secure-baseline) | This Module |
 |-----------------------------------------|-------|----------|
@@ -51,17 +51,17 @@ In this example, the integrated WAF is disabled, but OMS logging is enabled and 
 
 ```yaml
 app_gateway = {
-    enabled      = false
-    name         = ""
-    public_ip_id = ""
-    sku_capacity = "2"
-    sku_name     = "WAF_v2"
-    sku_tier     = "WAF_v2"
-    subnet_id    = ""
+  enabled      = false
+  name         = ""
+  public_ip_id = ""
+  sku_capacity = "2"
+  sku_name     = "WAF_v2"
+  sku_tier     = "WAF_v2"
+  subnet_id    = ""
   }
 ```
 
-This block defines the WAF integration.  If `enabled` = true, the `subnet_id` becomes a required field, as AGW requires it's own dedicated subnet to provision into.
+This block defines the app gateway integration.  If `enabled` = true, the `subnet_id` becomes a required field, as AGW requires it's own dedicated subnet to provision into.
 
 The module actually specifically defines the AGW and components as a seperate resource, so that if AKS is ever destroyed and rebuilt, provisioned public IPs remain until a value that forces similar action on the AGW occurs.
 
@@ -74,6 +74,32 @@ The module actually specifically defines the AGW and components as a seperate re
 | sku_name | string | no | WAF_v2 | set subscription information |
 | sku_tier | string | no | WAF_v2 | set subscription information |
 | subnet_id | string | yes | "" | if agw is enabled, this is a required value to  determine the subnet to place the AGW in |
+
+### waf_configuration
+
+```yaml
+waf_configuration = {
+  enabled                  = true
+  firewall_mode            = "Detection"
+  rule_set_type            = "OWASP"
+  rule_set_version         = "3.2"
+  file_upload_limit_mb     = 100
+  request_body_check       = true
+  max_request_body_size_kb = 128
+}
+```
+
+This block defines the WAF configuration.  As of azurerm 3.0, using a license sku of WAF_v2 requires configuration of the the WAF component either directly or via policy.  These settings are used during initiation only. Once created, the policies are pulled out of lifecycle to be managed by aks, azure policy, or similar and ONLY applied if the appropriate sku is used.
+
+| name | type | required | default | description |
+| --- | --- | --- | --- | --- |
+| enabled | bool | no | true | enables creation of WAF |
+| firewall_mode | string | no | Detection | Detection or Prevention |
+| rule_set_type | string | no | OWASP | only option available for now |
+| rule_set_version | string | no | "3.2" | version of OWASP rules |
+| file_upload_limit_mb | number | no | 100 | max file-size |
+| request_body_check | bool | no | true | scan body and not just headers |
+| max_request_body_size_kb | number | no | 128 | size of the body  of the message |
 
 ### node_default_pool
 
