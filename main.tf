@@ -7,7 +7,7 @@ locals {
   # ensure agw priority is set if sku is of type "v2"
   # if  nothing is provided, we will set to 1 for v2, or -1 to omit
   detect_priority = length(regexall("v2$", var.app_gateway.sku_tier)) > 0 ? 10 : null
-  priority = coalesce(var.app_gateway.priority, local.detect_priority, -1)
+  priority        = coalesce(var.app_gateway.priority, local.detect_priority, -1)
 
   # generate the resource names for everything based on the values offered
   names = {
