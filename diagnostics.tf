@@ -6,13 +6,12 @@ resource "azurerm_monitor_diagnostic_setting" "aks" {
   storage_account_id         = local.oms.storage_account_id
   log_analytics_workspace_id = local.oms.workspace_id
 
-  dynamic "log" {
+  dynamic "enabled_log" {
     for_each = local.oms.aks_logs
     content {
-      category = log.key
-      enabled  = log.value
+      category = enabled_log.key
       retention_policy {
-        enabled = log.value
+        enabled = enabled_log.value
         days    = local.oms.retention_days
       }
     }
@@ -36,13 +35,12 @@ resource "azurerm_monitor_diagnostic_setting" "agw" {
   storage_account_id         = local.oms.storage_account_id
   log_analytics_workspace_id = local.oms.workspace_id
 
-  dynamic "log" {
+  dynamic "enabled_log" {
     for_each = local.oms.agw_logs
     content {
-      category = log.key
-      enabled  = log.value
+      category = enabled_log.key
       retention_policy {
-        enabled = log.value
+        enabled = enabled_log.value
         days    = local.oms.retention_days
       }
     }

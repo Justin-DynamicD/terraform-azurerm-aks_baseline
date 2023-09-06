@@ -3,7 +3,7 @@
 # details: https://docs.microsoft.com/en-us/azure/aks/spot-node-pool
 
 locals {
-  aks_node_extra ={
+  aks_node_extra = {
     Regular = {
       labels = {}
       taints = []
@@ -12,7 +12,7 @@ locals {
       labels = {
         "kubernetes.azure.com/scalesetpriority" = "spot"
       }
-      taints =  [
+      taints = [
         "kubernetes.azure.com/scalesetpriority=spot:NoSchedule"
       ]
     }
@@ -39,16 +39,16 @@ resource "azurerm_kubernetes_cluster" "main" {
   dynamic "ingress_application_gateway" {
     for_each = local.app_gateway.enabled == true ? ["ingress_application_gateway"] : []
     content {
-      gateway_id                    = azurerm_application_gateway.main[0].id
+      gateway_id = azurerm_application_gateway.main[0].id
     }
   }
   key_vault_secrets_provider {
-    secret_rotation_enabled  = false
+    secret_rotation_enabled = false
   }
   dynamic "oms_agent" {
     for_each = local.oms.enabled == true ? ["oms_agent"] : []
     content {
-      log_analytics_workspace_id   = local.oms.workspace_id
+      log_analytics_workspace_id = local.oms.workspace_id
     }
   }
   default_node_pool {
@@ -70,7 +70,7 @@ resource "azurerm_kubernetes_cluster" "main" {
     identity_ids = [azurerm_user_assigned_identity.main.id]
   }
   network_profile {
-    network_plugin     = "azure"
+    network_plugin = "azure"
   }
   tags = local.tags
 }

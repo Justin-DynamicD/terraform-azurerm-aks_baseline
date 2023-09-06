@@ -19,15 +19,15 @@ resource "azurerm_role_assignment" "attach_acr" {
 
 # grants rights to the built role as well as the subnet (only needed for kubenet, but added for completeness)
 resource "azurerm_role_assignment" "subnet" {
-    scope                = local.subnet_id
-    role_definition_name = "Network Contributor"
-    principal_id         = azurerm_kubernetes_cluster.main.kubelet_identity[0].object_id
+  scope                = local.subnet_id
+  role_definition_name = "Network Contributor"
+  principal_id         = azurerm_kubernetes_cluster.main.kubelet_identity[0].object_id
 }
 
 resource "azurerm_role_assignment" "identity" {
-    scope                = azurerm_user_assigned_identity.main.id
-    role_definition_name = "Managed Identity Operator"
-    principal_id         = azurerm_kubernetes_cluster.main.kubelet_identity[0].object_id
+  scope                = azurerm_user_assigned_identity.main.id
+  role_definition_name = "Managed Identity Operator"
+  principal_id         = azurerm_kubernetes_cluster.main.kubelet_identity[0].object_id
 }
 
 # This assigns permissions to the AGW using discovered Idenitity

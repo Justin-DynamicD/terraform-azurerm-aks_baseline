@@ -1,4 +1,4 @@
-provider azurerm {
+provider "azurerm" {
   features {
     resource_group {
       prevent_deletion_if_contains_resources = false
@@ -7,8 +7,8 @@ provider azurerm {
 }
 
 # resource group to place everything in
-resource azurerm_resource_group "test" {
-  name = "test-aks-baseline"
+resource "azurerm_resource_group" "test" {
+  name     = "test-aks-baseline"
   location = "westus2"
 }
 
@@ -36,26 +36,26 @@ resource "azurerm_storage_account" "main" {
 }
 
 resource "azurerm_log_analytics_solution" "containerinsights" {
-    solution_name         = "ContainerInsights"
-    location              = azurerm_log_analytics_workspace.main.location
-    resource_group_name   = azurerm_resource_group.test.name
-    workspace_resource_id = azurerm_log_analytics_workspace.main.id
-    workspace_name        = azurerm_log_analytics_workspace.main.name
-    plan {
-        publisher = "Microsoft"
-        product   = "OMSGallery/ContainerInsights"
-    }
+  solution_name         = "ContainerInsights"
+  location              = azurerm_log_analytics_workspace.main.location
+  resource_group_name   = azurerm_resource_group.test.name
+  workspace_resource_id = azurerm_log_analytics_workspace.main.id
+  workspace_name        = azurerm_log_analytics_workspace.main.name
+  plan {
+    publisher = "Microsoft"
+    product   = "OMSGallery/ContainerInsights"
+  }
 }
 
 module "myvnet" {
   source = "Justin-DynamicD/virtual_network/azurerm"
-  global_settings  = {
+  global_settings = {
     name                = "aks_vnet"
     location            = azurerm_resource_group.test.location
     resource_group_name = azurerm_resource_group.test.name
   }
   network = {
-    address_spaces     = ["10.10.0.0/16"]
+    address_spaces = ["10.10.0.0/16"]
   }
   subnets = {
     agw          = "10.10.10.0/26"
@@ -67,7 +67,7 @@ module "myvnet" {
     private_link = true
   }
   subnet_service_endpoints = {
-    private_link = ["Microsoft.KeyVault","Microsoft.ContainerRegistry"]
+    private_link = ["Microsoft.KeyVault", "Microsoft.ContainerRegistry"]
   }
   tags = {
     Project   = "AKS Baseline"
@@ -101,7 +101,7 @@ module "aks" {
     node_count = 1
   }
   oms = {
-    enabled            = true
+    enabled = true
     # aks_logs = {
     #   guard = true
     # }
