@@ -20,22 +20,32 @@ locals {
   # details: https://docs.microsoft.com/en-us/azure/aks/spot-node-pool
   node_user_pool_defaults = {
     Regular = {
-      labels = {}
-      taints = []
+      node_labels = {}
+      node_taints = []
     }
     Spot = {
-      labels = {
+      node_labels = {
         "kubernetes.azure.com/scalesetpriority" = "spot"
       }
-      taints = [
+      node_taints = [
         "kubernetes.azure.com/scalesetpriority=spot:NoSchedule"
       ]
     }
   }
 
-  # merges the node_pool_defaults into the node_user_pool per priority
-  # type (see above) Allows user to override values.
-  node_user_pool = var.node_user_pool
+  # merges the node_user_pool_defaults with the node_user_pool via
+  # priority type (see above). Allows user to add values.
+  # node_user_pool = var.node_user_pool
+  node_user_pool_merged = {
+    node_labels = merge(
+      var.node_user_pool.node_labels,
+      local.node_user_pool_defaults[var.node_user_pool.priority].node_labels
+    )
+    node_taints = concat(
+      var.node_user_pool.node_taints,
+      local.node_user_pool_defaults[var.node_user_pool.priority].node_taints
+    )
+  }
 
   # these are unmodified, just dropped into locals for consistency
   acr_list                  = var.acr_list
@@ -45,6 +55,7 @@ locals {
   docker_bridge_cidr        = var.docker_bridge_cidr
   location                  = var.location
   node_default_pool         = var.node_default_pool
+  node_user_pool            = var.node_user_pool
   oms                       = var.oms
   resource_group_name       = var.resource_group_name
   sku_tier                  = var.sku_tier

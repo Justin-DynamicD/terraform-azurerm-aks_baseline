@@ -59,6 +59,8 @@ variable "node_user_pool" {
     mode                = optional(string, "User")
     name                = optional(string, "user")
     node_count          = optional(number, 2)
+    node_labels         = optional(map(any), {})     # needs defaults as we merge it later
+    node_taints         = optional(list(string), []) # needs defaults as we concat it later
     os_disk_size_gb     = optional(number, 120)
     os_disk_type        = optional(string, "Ephemeral")
     priority            = optional(string, "Regular")

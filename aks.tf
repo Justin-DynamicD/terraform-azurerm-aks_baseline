@@ -70,8 +70,8 @@ resource "azurerm_kubernetes_cluster_node_pool" "user" {
   mode                  = local.node_user_pool.mode
   name                  = local.node_user_pool.name
   node_count            = local.node_user_pool.node_count
-  node_labels           = local.node_user_pool_defaults[local.node_user_pool.priority].labels
-  node_taints           = local.node_user_pool_defaults[local.node_user_pool.priority].taints
+  node_labels           = local.node_user_pool_merged.node_labels
+  node_taints           = local.node_user_pool_merged.node_taints
   os_disk_size_gb       = local.node_user_pool.os_disk_size_gb
   os_disk_type          = local.node_user_pool.os_disk_type
   priority              = local.node_user_pool.priority
