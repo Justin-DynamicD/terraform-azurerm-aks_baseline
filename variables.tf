@@ -38,6 +38,8 @@ variable "node_default_pool" {
     min_count                    = optional(number, 3)
     name                         = optional(string, "system")
     node_count                   = optional(number, 3)
+    node_labels                  = optional(map(any))
+    node_taints                  = optional(list(string))
     only_critical_addons_enabled = optional(bool, true)
     os_disk_size_gb              = optional(number, 70)
     os_disk_type                 = optional(string, "Ephemeral")
@@ -57,6 +59,8 @@ variable "node_user_pool" {
     mode                = optional(string, "User")
     name                = optional(string, "user")
     node_count          = optional(number, 2)
+    node_labels         = optional(map(any), {})     # needs defaults as we merge it later
+    node_taints         = optional(list(string), []) # needs defaults as we concat it later
     os_disk_size_gb     = optional(number, 120)
     os_disk_type        = optional(string, "Ephemeral")
     priority            = optional(string, "Regular")
@@ -74,7 +78,7 @@ variable "oms" {
       ApplicationGatewayAccessLog      = optional(bool, true)
       ApplicationGatewayPerformanceLog = optional(bool, true)
       ApplicationGatewayFirewallLog    = optional(bool, true)
-    }))
+    }), {})
     agw_metrics = optional(bool, true)
     aks_logs = optional(object({
       cloud-controller-manager = optional(bool, false)
@@ -88,7 +92,7 @@ variable "oms" {
       kube-audit-admin         = optional(bool, true)
       kube-controller-manager  = optional(bool, true)
       kube-scheduler           = optional(bool, false)
-    }))
+    }), {})
     aks_metrics        = optional(bool, true)
     retention_days     = optional(number, 30)
     storage_account_id = optional(string)

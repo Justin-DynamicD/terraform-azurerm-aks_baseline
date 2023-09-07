@@ -128,6 +128,8 @@ node_default_pool = {
 | min_count | number | no | 3 | minimum number of nodes |
 | name | string | no | "system" | sets the name of the default node pool |
 | node_count | number | no | 3 | sets the initial node count |
+| node_labels | map | no | null | add labels to the nodes |
+| node_taints | list | no | null | add taints to the nodes |
 | only_critical_addons_enabled | bool | no | true | sets the node pool as type "system" restricting user workloads |
 | os_disk_size_gb | number | no | 70 | size of node disks in GB |
 | os_disk_type | string | no | "Ephemeral" | type of disk |
@@ -167,11 +169,15 @@ node_user_pool = {
 | mode | string | no | "User" | sets pool mode between User/System |
 | name | string | no | "user" | sets the name of the node pool |
 | node_count | number | no | 2 | sets the initial node count |
+| node_labels | map | no | {}[^1] | add labels to the nodes |
+| node_taints | list | no | [][^1] | add taints to the nodes |
 | os_disk_size_gb | number | no | 120 | size of node disks in GB |
 | os_disk_type | string | no | "Ephemeral" | type of disk |
 | priority | string | no | "Regular" | the type of nodes |
 | spot_max_price | number | no | -1 | used with spot instances, set a price limit on server cost, -1 means no limit |
 | vm_size | string | no | "Standard_D4ds_v5" | set the node type |
+
+[^1]: `node_labels` and `node_taints` are merged with default labels as [recomended by Microsoft](https://docs.microsoft.com/en-us/azure/aks/spot-node-pool). As of this writing, this is specific to Spot instances.
 
 ### oms
 
