@@ -1,25 +1,3 @@
-# this local block follows Azure Documentation for node labels + taints
-# and contains thier configuration which is applied by priority
-# details: https://docs.microsoft.com/en-us/azure/aks/spot-node-pool
-
-locals {
-  aks_node_extra = {
-    Regular = {
-      labels = {}
-      taints = []
-    }
-    Spot = {
-      labels = {
-        "kubernetes.azure.com/scalesetpriority" = "spot"
-      }
-      taints = [
-        "kubernetes.azure.com/scalesetpriority=spot:NoSchedule"
-      ]
-    }
-  }
-}
-
-
 resource "azurerm_kubernetes_cluster" "main" {
   lifecycle {
     # due to auto-scaling we need to ignore the nodecount after launch
@@ -57,6 +35,8 @@ resource "azurerm_kubernetes_cluster" "main" {
     min_count                    = local.node_default_pool.min_count
     name                         = local.node_default_pool.name
     node_count                   = local.node_default_pool.node_count
+    node_labels                  = local.node_default_pool.node_labels
+    node_taints                  = local.node_default_pool.node_taints
     only_critical_addons_enabled = local.node_default_pool.only_critical_addons_enabled
     os_disk_size_gb              = local.node_default_pool.os_disk_size_gb
     os_disk_type                 = local.node_default_pool.os_disk_type
@@ -90,8 +70,8 @@ resource "azurerm_kubernetes_cluster_node_pool" "user" {
   mode                  = local.node_user_pool.mode
   name                  = local.node_user_pool.name
   node_count            = local.node_user_pool.node_count
-  node_labels           = local.aks_node_extra[local.node_user_pool.priority].labels
-  node_taints           = local.aks_node_extra[local.node_user_pool.priority].taints
+  node_labels           = local.node_user_pool_defaults[local.node_user_pool.priority].labels
+  node_taints           = local.node_user_pool_defaults[local.node_user_pool.priority].taints
   os_disk_size_gb       = local.node_user_pool.os_disk_size_gb
   os_disk_type          = local.node_user_pool.os_disk_type
   priority              = local.node_user_pool.priority

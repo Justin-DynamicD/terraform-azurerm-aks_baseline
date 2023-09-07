@@ -5,7 +5,7 @@
 
 locals {
   # ensure agw priority is set if sku is of type "v2"
-  # if  nothing is provided, we will set to 1 for v2, or -1 to omit
+  # if nothing is provided, we will set to 1 for v2, or -1 to omit
   detect_priority = length(regexall("v2$", var.app_gateway.sku_tier)) > 0 ? 10 : null
   priority        = coalesce(var.app_gateway.priority, local.detect_priority, -1)
 
@@ -15,7 +15,29 @@ locals {
     agw = coalesce(var.app_gateway.name, "${var.name_prefix}-agw")
   }
 
-  # these are unmodified, just dropped into locals for cconsistency
+  # This block follows Azure Documentation for default node labels + taints
+  # which is unique to each priority type.
+  # details: https://docs.microsoft.com/en-us/azure/aks/spot-node-pool
+  node_user_pool_defaults = {
+    Regular = {
+      labels = {}
+      taints = []
+    }
+    Spot = {
+      labels = {
+        "kubernetes.azure.com/scalesetpriority" = "spot"
+      }
+      taints = [
+        "kubernetes.azure.com/scalesetpriority=spot:NoSchedule"
+      ]
+    }
+  }
+
+  # merges the node_pool_defaults into the node_user_pool per priority
+  # type (see above) Allows user to override values.
+  node_user_pool = var.node_user_pool
+
+  # these are unmodified, just dropped into locals for consistency
   acr_list                  = var.acr_list
   app_gateway               = var.app_gateway
   automatic_channel_upgrade = var.automatic_channel_upgrade
@@ -23,7 +45,6 @@ locals {
   docker_bridge_cidr        = var.docker_bridge_cidr
   location                  = var.location
   node_default_pool         = var.node_default_pool
-  node_user_pool            = var.node_user_pool
   oms                       = var.oms
   resource_group_name       = var.resource_group_name
   sku_tier                  = var.sku_tier
