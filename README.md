@@ -133,6 +133,7 @@ node_default_pool = {
 | only_critical_addons_enabled | bool | no | true | sets the node pool as type "system" restricting user workloads |
 | os_disk_size_gb | number | no | 70 | size of node disks in GB |
 | os_disk_type | string | no | "Ephemeral" | type of disk |
+| os_sku | string | no | null | Specifies the OS SKU used by the agent pool. Possible values include: `AzureLinux`, `Ubuntu`, `Windows2019`, `Windows2022` |
 | vm_size | string | no | "Standard_D2ds_v5" | set the node type |
 
 ### node_user_pool
@@ -174,7 +175,8 @@ node_user_pool = {
 | node_taints | list | no | [][^1] | add taints to the nodes |
 | os_disk_size_gb | number | no | 120 | size of node disks in GB |
 | os_disk_type | string | no | "Ephemeral" | type of disk |
-| os_type | string | no | "Linux" | the type of OS to run. As of this writing, supported types are "Windows" "Linux" |
+| os_sku | string | no | null | Specifies the OS SKU used by the agent pool. Possible values include: `AzureLinux`, `Ubuntu`, `Windows2019`, `Windows2022` |
+| os_type | string | no | "Linux" | the type of OS to run. As of this writing, supported types are `Windows` `Linux` |
 | priority | string | no | "Regular" | the type of nodes |
 | spot_max_price | number | no | -1 | used with spot instances, set a price limit on server cost, -1 means no limit |
 | vm_size | string | no | "Standard_D4ds_v5" | set the node type |
