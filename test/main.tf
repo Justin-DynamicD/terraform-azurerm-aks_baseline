@@ -99,7 +99,7 @@ module "aks" {
   node_user_pool = {
     min_count  = 1
     node_count = 1
-    os_type    = "Linux"
+    os_type    = "Windows"
   }
   oms = {
     enabled = true

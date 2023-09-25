@@ -43,6 +43,7 @@ variable "node_default_pool" {
     only_critical_addons_enabled = optional(bool, true)
     os_disk_size_gb              = optional(number, 70)
     os_disk_type                 = optional(string, "Ephemeral")
+    os_sku                       = optional(string, null)
     vm_size                      = optional(string, "Standard_D2ds_v5")
   })
   description = "node default system pool for aks"
@@ -61,9 +62,10 @@ variable "node_user_pool" {
     node_count          = optional(number, 2)
     node_labels         = optional(map(any), {})     # needs defaults as we merge it later
     node_taints         = optional(list(string), []) # needs defaults as we concat it later
-    os_type             = optional(string, "Linux")
     os_disk_size_gb     = optional(number, 120)
     os_disk_type        = optional(string, "Ephemeral")
+    os_sku              = optional(string, null)
+    os_type             = optional(string, "Linux")
     priority            = optional(string, "Regular")
     spot_max_price      = optional(number, -1)
     vm_size             = optional(string, "Standard_D4ds_v5")
