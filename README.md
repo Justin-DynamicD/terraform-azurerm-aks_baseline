@@ -153,6 +153,7 @@ node_user_pool = {
   node_count          = 2
   os_disk_size_gb     = 120
   os_disk_type        = "Ephemeral"
+  os_type             = "Linux"
   priority            = "Regular"
   spot_max_price      = -1
   vm_size             = "Standard_D4ds_v5"
@@ -173,6 +174,7 @@ node_user_pool = {
 | node_taints | list | no | [][^1] | add taints to the nodes |
 | os_disk_size_gb | number | no | 120 | size of node disks in GB |
 | os_disk_type | string | no | "Ephemeral" | type of disk |
+| os_type | string | no | "Linux" | the type of OS to run. As of this writing, supported types are "Windows" "Linux" |
 | priority | string | no | "Regular" | the type of nodes |
 | spot_max_price | number | no | -1 | used with spot instances, set a price limit on server cost, -1 means no limit |
 | vm_size | string | no | "Standard_D4ds_v5" | set the node type |

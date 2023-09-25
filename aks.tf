@@ -74,6 +74,7 @@ resource "azurerm_kubernetes_cluster_node_pool" "user" {
   node_taints           = local.node_user_pool_merged.node_taints
   os_disk_size_gb       = local.node_user_pool.os_disk_size_gb
   os_disk_type          = local.node_user_pool.os_disk_type
+  os_type               = local.node_user_pool.os_type
   priority              = local.node_user_pool.priority
   eviction_policy       = local.node_user_pool.priority == "Spot" ? local.node_user_pool.eviction_policy : null
   spot_max_price        = local.node_user_pool.priority == "Spot" ? local.node_user_pool.spot_max_price : null

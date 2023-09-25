@@ -10,20 +10,12 @@ resource "azurerm_monitor_diagnostic_setting" "aks" {
     for_each = local.oms.aks_logs
     content {
       category = enabled_log.key
-      retention_policy {
-        enabled = enabled_log.value
-        days    = local.oms.retention_days
-      }
     }
   }
 
   metric {
     category = "AllMetrics"
     enabled  = local.oms.aks_metrics
-    retention_policy {
-      enabled = local.oms.aks_metrics
-      days    = local.oms.retention_days
-    }
   }
 }
 
@@ -39,19 +31,35 @@ resource "azurerm_monitor_diagnostic_setting" "agw" {
     for_each = local.oms.agw_logs
     content {
       category = enabled_log.key
-      retention_policy {
-        enabled = enabled_log.value
-        days    = local.oms.retention_days
-      }
     }
   }
 
   metric {
     category = "AllMetrics"
     enabled  = local.oms.agw_metrics
-    retention_policy {
-      enabled = local.oms.agw_metrics
-      days    = local.oms.retention_days
+  }
+}
+
+resource "random_string" "policySuffix" {
+  length  = 8
+  special = false
+  upper   = false
+}
+
+resource "azurerm_storage_management_policy" "main" {
+  count              = local.oms.enabled == true ? 1 : 0
+  storage_account_id = local.oms.storage_account_id
+
+  rule {
+    name    = "aks_basseline-${random_string.policySuffix.result}"
+    enabled = true
+    filters {
+      blob_types   = ["appendBlob"]
+    }
+    actions {
+      base_blob {
+        delete_after_days_since_modification_greater_than = local.oms.retention_days
+      }
     }
   }
 }
