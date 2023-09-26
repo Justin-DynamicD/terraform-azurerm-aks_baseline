@@ -64,7 +64,7 @@ app_gateway = {
 
 This block defines the app gateway integration.  If `enabled` = true, the `subnet_id` becomes a required field, as AGW requires it's own dedicated subnet to provision into.
 
-The module actually specifically defines the AGW and components as a seperate resource, so that if AKS is ever destroyed and rebuilt, provisioned public IPs remain until a value that forces similar action on the AGW occurs. Some parameter combinations are specific to certain versions of AGW.  [Please see here for more information](# read more here: https://learn.microsoft.com/en-us/azure/application-gateway/application-gateway-components#static-versus-dynamic-public-ip-address)
+The module actually specifically defines the AGW and components as a seperate resource, so that if AKS is ever destroyed and rebuilt, provisioned public IPs remain until a value that forces similar action on the AGW occurs. Some parameter combinations are specific to certain versions of AGW (v1 vs v2).  [Please see here for more information](# read more here: https://learn.microsoft.com/en-us/azure/application-gateway/application-gateway-components#static-versus-dynamic-public-ip-address)
 
 | name | type | required | default | description |
 | --- | --- | --- | --- | --- |

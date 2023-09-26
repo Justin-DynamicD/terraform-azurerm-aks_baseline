@@ -105,7 +105,7 @@ resource "azurerm_application_gateway" "main" {
       priority                   = local.public_priority != -1 ? local.public_priority : null
     }
   }
-    dynamic "request_routing_rule" {
+  dynamic "request_routing_rule" {
     for_each = local.app_gateway.private_ip ? ["private_rr"] : []
     content {
       name                       = "private"

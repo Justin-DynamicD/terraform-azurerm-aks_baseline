@@ -10,9 +10,9 @@ locals {
 
   # ensure agw priority is set if sku is of type "v2"
   # if nothing is provided, we will set to 10/20 for v2, or -1 to omit
-  default_priority  = local.is_v2 ? 10 : null
+  default_priority = local.is_v2 ? 10 : null
   public_priority  = coalesce(var.app_gateway.public_priority, local.default_priority, -1)
-  private_priority = coalesce(var.app_gateway.private_priority, local.default_priority+10, -1)
+  private_priority = coalesce(var.app_gateway.private_priority, local.default_priority + 10, -1)
 
   # only v1 WAF supports dynamic address allocation, set that here
   private_ip_address_allocation = local.is_v2 || local.app_gateway.private_ip_address != "" ? "Static" : "Dynamic"
