@@ -4,17 +4,38 @@
 
 variable "app_gateway" {
   type = object({
-    enabled      = optional(bool, false)
-    name         = optional(string)
-    public_ip_id = optional(string, "")
-    priority     = optional(number)
-    sku_capacity = optional(string, "2")
-    sku_name     = optional(string, "WAF_v2")
-    sku_tier     = optional(string, "WAF_v2")
-    subnet_id    = optional(string, "")
+    enabled              = optional(bool, false)
+    name                 = optional(string)
+    private_ip           = optional(bool, false)
+    private_ip_address   = optional(string, "")
+    private_priority     = optional(number)
+    private_ip_subnet_id = optional(string)
+    public_ip            = optional(bool, true)
+    public_ip_id         = optional(string, "")
+    public_priority      = optional(number)
+    sku_capacity         = optional(string, "2")
+    sku_name             = optional(string, "WAF_v2")
+    sku_tier             = optional(string, "WAF_v2")
+    subnet_id            = optional(string)
   })
   description = "map of all agw variables"
   default     = {}
+  validation {
+    condition     = length(regexall("v2$", var.app_gateway.sku_tier)) == 0 || (length(regexall("v2$", var.app_gateway.sku_tier)) > 0 && var.app_gateway.public_ip == true)
+    error_message = "If sku_tier is v2, then public_ip must be set to true."
+  }
+  validation {
+    condition     = var.app_gateway.private_ip == false || (length(regexall("v2$", var.app_gateway.sku_tier)) > 0 && var.app_gateway.private_ip_address != "")
+    error_message = "If sku_tier is v2, then private_ip_address must be set when private_ip is set to true"
+  }
+  validation {
+    condition     = length(regexall("v2$", var.app_gateway.sku_tier)) > 0 || (length(regexall("v2$", var.app_gateway.sku_tier)) == 0 && var.app_gateway.public_ip_id != "")
+    error_message = "If sku_tier is v1, then public_ip_id must be empty"
+  }
+  validation {
+    condition     = var.app_gateway.enabled == false || (var.app_gateway.enabled && var.app_gateway.subnet_id != null)
+    error_message = "subnet_id is required when enabled is true"
+  }
 }
 
 variable "waf_configuration" {
@@ -43,6 +64,7 @@ variable "node_default_pool" {
     only_critical_addons_enabled = optional(bool, true)
     os_disk_size_gb              = optional(number, 70)
     os_disk_type                 = optional(string, "Ephemeral")
+    os_sku                       = optional(string, null)
     vm_size                      = optional(string, "Standard_D2ds_v5")
   })
   description = "node default system pool for aks"
@@ -63,6 +85,8 @@ variable "node_user_pool" {
     node_taints         = optional(list(string), []) # needs defaults as we concat it later
     os_disk_size_gb     = optional(number, 120)
     os_disk_type        = optional(string, "Ephemeral")
+    os_sku              = optional(string, null)
+    os_type             = optional(string, "Linux")
     priority            = optional(string, "Regular")
     spot_max_price      = optional(number, -1)
     vm_size             = optional(string, "Standard_D4ds_v5")
