@@ -53,7 +53,8 @@ In this example, the integrated WAF is disabled, but OMS logging is enabled and 
 app_gateway = {
   enabled      = false
   name         = ""
-  public_ip_id = ""
+  private_ip   = false
+  public_ip    = true
   sku_capacity = "2"
   sku_name     = "WAF_v2"
   sku_tier     = "WAF_v2"
@@ -63,13 +64,19 @@ app_gateway = {
 
 This block defines the app gateway integration.  If `enabled` = true, the `subnet_id` becomes a required field, as AGW requires it's own dedicated subnet to provision into.
 
-The module actually specifically defines the AGW and components as a seperate resource, so that if AKS is ever destroyed and rebuilt, provisioned public IPs remain until a value that forces similar action on the AGW occurs.
+The module actually specifically defines the AGW and components as a seperate resource, so that if AKS is ever destroyed and rebuilt, provisioned public IPs remain until a value that forces similar action on the AGW occurs. Some parameter combinations are specific to certain versions of AGW.  [Please see here for more information](# read more here: https://learn.microsoft.com/en-us/azure/application-gateway/application-gateway-components#static-versus-dynamic-public-ip-address)
 
 | name | type | required | default | description |
 | --- | --- | --- | --- | --- |
 | enabled | bool | no | false | enables creation of AGW |
 | name | string | no | - | if specified, overrides the auto-generated name with this string |
+| private_ip | bool | no | false | enables creation of a private IP listener |
+| private_ip_address | string | no | "" | if specified, sets the private IP address |
+| private_priority | string | no | 20 | if specified, set the routing rule priority |
+| private_ip_subnet_id | string | no | - | if specified, attempts to create the listener in the specified subnet_id |
+| public_ip | bool | no | true | enables creation of a private IP listener |
 | public_ip_id | string | no | - | if specified, instead of creating a public IP resource, will leverage the existing defined IP |
+| public_priority | string | no | 10 | if specified, set the routing rule priority |
 | sku_capacity | string | no | "2" | number of systems to deploy |
 | sku_name | string | no | WAF_v2 | set subscription information |
 | sku_tier | string | no | WAF_v2 | set subscription information |

@@ -54,7 +54,7 @@ resource "azurerm_storage_management_policy" "main" {
     name    = "aks_basseline-${random_string.policySuffix.result}"
     enabled = true
     filters {
-      blob_types   = ["appendBlob"]
+      blob_types = ["appendBlob"]
     }
     actions {
       base_blob {

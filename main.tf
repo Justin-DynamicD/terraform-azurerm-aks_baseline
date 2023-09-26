@@ -4,10 +4,18 @@
 ######
 
 locals {
+  # detect if sku is of type "v2". This impacts supported ip address combinations
+  # read more here: https://learn.microsoft.com/en-us/azure/application-gateway/application-gateway-components#static-versus-dynamic-public-ip-address
+  is_v2 = length(regexall("v2$", var.app_gateway.sku_tier)) > 0 ? true : false
+
   # ensure agw priority is set if sku is of type "v2"
-  # if nothing is provided, we will set to 1 for v2, or -1 to omit
-  detect_priority = length(regexall("v2$", var.app_gateway.sku_tier)) > 0 ? 10 : null
-  priority        = coalesce(var.app_gateway.priority, local.detect_priority, -1)
+  # if nothing is provided, we will set to 10/20 for v2, or -1 to omit
+  default_priority  = local.is_v2 ? 10 : null
+  public_priority  = coalesce(var.app_gateway.public_priority, local.default_priority, -1)
+  private_priority = coalesce(var.app_gateway.private_priority, local.default_priority+10, -1)
+
+  # only v1 WAF supports dynamic address allocation, set that here
+  private_ip_address_allocation = local.is_v2 || local.app_gateway.private_ip_address != "" ? "Static" : "Dynamic"
 
   # generate the resource names for everything based on the values offered
   names = {

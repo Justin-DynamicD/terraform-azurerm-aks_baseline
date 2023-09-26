@@ -91,6 +91,8 @@ module "aks" {
   app_gateway = {
     enabled   = true
     subnet_id = module.myvnet.vnet_subnets["agw"].id
+    public_ip = true
+    private_ip = false
   }
   node_default_pool = {
     min_count  = 1
@@ -99,7 +101,6 @@ module "aks" {
   node_user_pool = {
     min_count  = 1
     node_count = 1
-    os_type    = "Windows"
   }
   oms = {
     enabled = true

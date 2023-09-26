@@ -4,17 +4,38 @@
 
 variable "app_gateway" {
   type = object({
-    enabled      = optional(bool, false)
-    name         = optional(string)
-    public_ip_id = optional(string, "")
-    priority     = optional(number)
-    sku_capacity = optional(string, "2")
-    sku_name     = optional(string, "WAF_v2")
-    sku_tier     = optional(string, "WAF_v2")
-    subnet_id    = optional(string, "")
+    enabled              = optional(bool, false)
+    name                 = optional(string)
+    private_ip           = optional(bool, false)
+    private_ip_address   = optional(string, "")
+    private_priority     = optional(number)
+    private_ip_subnet_id = optional(string)
+    public_ip            = optional(bool, true)
+    public_ip_id         = optional(string, "")
+    public_priority      = optional(number)
+    sku_capacity         = optional(string, "2")
+    sku_name             = optional(string, "WAF_v2")
+    sku_tier             = optional(string, "WAF_v2")
+    subnet_id            = optional(string)
   })
   description = "map of all agw variables"
   default     = {}
+  validation {
+    condition     = length(regexall("v2$", var.app_gateway.sku_tier)) == 0 || (length(regexall("v2$", var.app_gateway.sku_tier)) > 0 && var.app_gateway.public_ip == true)
+    error_message = "If sku_tier is v2, then public_ip must be set to true."
+  }
+  validation {
+    condition     = var.app_gateway.private_ip == false || (length(regexall("v2$", var.app_gateway.sku_tier)) > 0 && var.app_gateway.private_ip_address != "")
+    error_message = "If sku_tier is v2, then private_ip_address must be set when private_ip is set to true"
+  }
+  validation {
+    condition     = length(regexall("v2$", var.app_gateway.sku_tier)) > 0 || (length(regexall("v2$", var.app_gateway.sku_tier)) == 0 && var.app_gateway.public_ip_id != "")
+    error_message = "If sku_tier is v1, then public_ip_id must be empty"
+  }
+  validation {
+    condition     = var.app_gateway.enabled == false || (var.app_gateway.enabled && var.app_gateway.subnet_id != null)
+    error_message = "subnet_id is required when enabled is true"
+  }
 }
 
 variable "waf_configuration" {
