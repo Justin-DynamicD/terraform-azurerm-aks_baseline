@@ -58,7 +58,7 @@ locals {
   # these are unmodified, just dropped into locals for consistency
   acr_list                  = var.acr_list
   app_gateway               = var.app_gateway
-  automatic_channel_upgrade = var.automatic_channel_upgrade
+  automatic_upgrade_channel = var.automatic_upgrade_channel
   azure_policy              = var.azure_policy
   docker_bridge_cidr        = var.docker_bridge_cidr
   location                  = var.location

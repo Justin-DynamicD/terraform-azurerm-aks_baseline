@@ -54,13 +54,12 @@ variable "waf_configuration" {
 
 variable "node_default_pool" {
   type = object({
-    enable_auto_scaling          = optional(bool, true)
+    auto_scaling_enabled         = optional(bool, true)
     max_count                    = optional(number, 4)
     min_count                    = optional(number, 3)
     name                         = optional(string, "system")
     node_count                   = optional(number, 3)
     node_labels                  = optional(map(any))
-    node_taints                  = optional(list(string))
     only_critical_addons_enabled = optional(bool, true)
     os_disk_size_gb              = optional(number, 70)
     os_disk_type                 = optional(string, "Ephemeral")
@@ -73,23 +72,23 @@ variable "node_default_pool" {
 
 variable "node_user_pool" {
   type = object({
-    enable_auto_scaling = optional(bool, true)
-    enabled             = optional(bool, true)
-    eviction_policy     = optional(string, "Delete")
-    max_count           = optional(number, 5)
-    min_count           = optional(number, 2)
-    mode                = optional(string, "User")
-    name                = optional(string, "user")
-    node_count          = optional(number, 2)
-    node_labels         = optional(map(any), {})     # needs defaults as we merge it later
-    node_taints         = optional(list(string), []) # needs defaults as we concat it later
-    os_disk_size_gb     = optional(number, 120)
-    os_disk_type        = optional(string, "Ephemeral")
-    os_sku              = optional(string, null)
-    os_type             = optional(string, "Linux")
-    priority            = optional(string, "Regular")
-    spot_max_price      = optional(number, -1)
-    vm_size             = optional(string, "Standard_D4ds_v5")
+    auto_scaling_enabled = optional(bool, true)
+    enabled              = optional(bool, true)
+    eviction_policy      = optional(string, "Delete")
+    max_count            = optional(number, 5)
+    min_count            = optional(number, 2)
+    mode                 = optional(string, "User")
+    name                 = optional(string, "user")
+    node_count           = optional(number, 2)
+    node_labels          = optional(map(any), {})     # needs defaults as we merge it later
+    node_taints          = optional(list(string), []) # needs defaults as we concat it later
+    os_disk_size_gb      = optional(number, 120)
+    os_disk_type         = optional(string, "Ephemeral")
+    os_sku               = optional(string, null)
+    os_type              = optional(string, "Linux")
+    priority             = optional(string, "Regular")
+    spot_max_price       = optional(number, -1)
+    vm_size              = optional(string, "Standard_D4ds_v5")
   })
   description = "node user pool for aks"
   default     = {}
@@ -133,11 +132,16 @@ variable "acr_list" {
   default     = {}
 }
 
-variable "automatic_channel_upgrade" {
+variable "automatic_upgrade_channel" {
   type        = string
-  description = "the upgrade channel for aks"
+  description = "The upgrade channel for this Kubernetes Cluster."
   nullable    = false
-  default     = ""
+  default     = "none"
+
+  validation {
+    condition     = contains(["patch", "rapid", "node-image", "stable", "none"], var.automatic_upgrade_channel)
+    error_message = "Valid values for automatic_upgrade_channel are 'stable', 'rapid', 'patch', 'node-image' or 'none'."
+  }
 }
 
 variable "azure_policy" {

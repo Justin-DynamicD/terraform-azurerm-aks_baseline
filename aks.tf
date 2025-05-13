@@ -10,7 +10,7 @@ resource "azurerm_kubernetes_cluster" "main" {
   dns_prefix                        = replace(local.names.aks, "-", "")
   resource_group_name               = data.azurerm_resource_group.source.name
   sku_tier                          = local.sku_tier
-  automatic_channel_upgrade         = local.automatic_channel_upgrade != "" ? local.automatic_channel_upgrade : null
+  automatic_upgrade_channel         = local.automatic_upgrade_channel != "none" ? local.automatic_upgrade_channel : null
   azure_policy_enabled              = local.azure_policy
   http_application_routing_enabled  = false
   role_based_access_control_enabled = true
@@ -30,13 +30,12 @@ resource "azurerm_kubernetes_cluster" "main" {
     }
   }
   default_node_pool {
-    enable_auto_scaling          = local.node_default_pool.enable_auto_scaling
+    auto_scaling_enabled         = local.node_default_pool.auto_scaling_enabled
     max_count                    = local.node_default_pool.max_count
     min_count                    = local.node_default_pool.min_count
     name                         = local.node_default_pool.name
     node_count                   = local.node_default_pool.node_count
     node_labels                  = local.node_default_pool.node_labels
-    node_taints                  = local.node_default_pool.node_taints
     only_critical_addons_enabled = local.node_default_pool.only_critical_addons_enabled
     os_disk_size_gb              = local.node_default_pool.os_disk_size_gb
     os_disk_type                 = local.node_default_pool.os_disk_type
@@ -64,7 +63,7 @@ resource "azurerm_kubernetes_cluster_node_pool" "user" {
     ]
   }
   count                 = local.node_user_pool.enabled ? 1 : 0
-  enable_auto_scaling   = local.node_user_pool.enable_auto_scaling
+  auto_scaling_enabled  = local.node_user_pool.auto_scaling_enabled
   kubernetes_cluster_id = azurerm_kubernetes_cluster.main.id
   max_count             = local.node_user_pool.max_count
   min_count             = local.node_user_pool.min_count
