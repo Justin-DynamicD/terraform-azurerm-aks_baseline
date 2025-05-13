@@ -89,9 +89,9 @@ module "aks" {
   resource_group_name = azurerm_resource_group.test.name
   subnet_id           = module.myvnet.vnet_subnets["aks_nodes"].id
   app_gateway = {
-    enabled   = true
-    subnet_id = module.myvnet.vnet_subnets["agw"].id
-    public_ip = true
+    enabled    = true
+    subnet_id  = module.myvnet.vnet_subnets["agw"].id
+    public_ip  = true
     private_ip = false
   }
   node_default_pool = {

@@ -1,4 +1,4 @@
-provider azurerm {
+provider "azurerm" {
   features {
     resource_group {
       prevent_deletion_if_contains_resources = false # only good for demo, remove in prod
@@ -6,8 +6,8 @@ provider azurerm {
   }
 }
 
-resource azurerm_resource_group "main" {
-  name = "basic-aks-baseline"
+resource "azurerm_resource_group" "main" {
+  name     = "basic-aks-baseline"
   location = "westus2"
 }
 
@@ -35,31 +35,31 @@ resource "azurerm_storage_account" "main" {
 }
 
 resource "azurerm_log_analytics_solution" "containerinsights" {
-    solution_name         = "ContainerInsights"
-    location              = azurerm_log_analytics_workspace.main.location
-    resource_group_name   = azurerm_resource_group.main.name
-    workspace_resource_id = azurerm_log_analytics_workspace.main.id
-    workspace_name        = azurerm_log_analytics_workspace.main.name
-    plan {
-        publisher = "Microsoft"
-        product   = "OMSGallery/ContainerInsights"
-    }
+  solution_name         = "ContainerInsights"
+  location              = azurerm_log_analytics_workspace.main.location
+  resource_group_name   = azurerm_resource_group.main.name
+  workspace_resource_id = azurerm_log_analytics_workspace.main.id
+  workspace_name        = azurerm_log_analytics_workspace.main.name
+  plan {
+    publisher = "Microsoft"
+    product   = "OMSGallery/ContainerInsights"
+  }
 }
 
 # network to run on
 module "myvnet" {
   source = "Justin-DynamicD/virtual_network/azurerm"
-  global_settings  = {
+  global_settings = {
     name                = "aks_vnet"
     location            = azurerm_resource_group.main.location
     resource_group_name = azurerm_resource_group.main.name
   }
   network = {
-    address_spaces     = ["10.10.0.0/16"]
+    address_spaces = ["10.10.0.0/16"]
   }
   subnets = {
-    agw          = "10.10.10.0/26"
-    aks_nodes    = "10.10.16.0/20"
+    agw       = "10.10.10.0/26"
+    aks_nodes = "10.10.16.0/20"
   }
 }
 

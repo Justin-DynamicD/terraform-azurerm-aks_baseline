@@ -10,7 +10,7 @@ resource "azurerm_kubernetes_cluster" "main" {
   dns_prefix                        = replace(local.names.aks, "-", "")
   resource_group_name               = data.azurerm_resource_group.source.name
   sku_tier                          = local.sku_tier
-  automatic_upgrade_channel         = local.automatic_upgrade_channel != "" ? local.automatic_upgrade_channel : null
+  automatic_upgrade_channel         = local.automatic_upgrade_channel != "none" ? local.automatic_upgrade_channel : null
   azure_policy_enabled              = local.azure_policy
   http_application_routing_enabled  = false
   role_based_access_control_enabled = true
