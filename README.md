@@ -136,7 +136,6 @@ node_default_pool = {
 | name | string | no | "system" | sets the name of the default node pool |
 | node_count | number | no | 3 | sets the initial node count |
 | node_labels | map | no | null | add labels to the nodes |
-| node_taints | list | no | null | add taints to the nodes |
 | only_critical_addons_enabled | bool | no | true | sets the node pool as type "system" restricting user workloads |
 | os_disk_size_gb | number | no | 70 | size of node disks in GB |
 | os_disk_type | string | no | "Ephemeral" | type of disk |
