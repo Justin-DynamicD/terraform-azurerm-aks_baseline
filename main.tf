@@ -61,7 +61,7 @@ locals {
   automatic_upgrade_channel = var.automatic_upgrade_channel
   azure_policy              = var.azure_policy
   docker_bridge_cidr        = var.docker_bridge_cidr
-  flux_enabled              = var.flux_enabled
+  flux                      = var.flux
   location                  = var.location
   node_default_pool         = var.node_default_pool
   node_user_pool            = var.node_user_pool

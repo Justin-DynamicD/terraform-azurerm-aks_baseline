@@ -8,7 +8,7 @@ Unlike the the complete topology example that includes the required hub-and-spok
 |-----------------------------------------|-------|----------|
 | Virtual Network hub-and-spoke           |  ✅   |    ❌    |
 | Egress restriction using Azure Firewall |  ✅   |    ❌    |
-| Fluxv2 integration*                     |  ✅   |    ✅    |
+| Fluxv2 integration                      |  ✅   |    ✅    |
 | Azure Networking CNI                    |  ✅   |    ✅    |
 | Azure Active Directory Pod Identity     |  ✅   |    ✅    |
 | Default Recomended Node config          |  ✅   |    ✅    |
@@ -17,8 +17,6 @@ Unlike the the complete topology example that includes the required hub-and-spok
 | Keyvault secrets provider               |  ✅   |    ✅    |
 | Azure Policy enabled                    |  ✅   |    ✅    |
 | Managed public IP option                |  ❌   |    ✅    |
-
-> Note: At this time `flux_enabled` boolean only toggles if flux is installed or not, it does NOT configure flux to consume a repository. This was done as the settings are bespoke enough that including it preconfigured is too limiting. You can use [azurerm_kubernetes_flux_configuration](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/kubernetes_flux_configuration) to configure the settings as needed.
 
 Each recomended integration is bundled into its own custom object block so it can be enabled/disabled as needed.  For example:
 
@@ -81,6 +79,26 @@ The module actually specifically defines the AGW and components as a seperate re
 | sku_name | string | no | WAF_v2 | set subscription information |
 | sku_tier | string | no | WAF_v2 | set subscription information |
 | subnet_id | string | yes | "" | if agw is enabled, this is a required value to  determine the subnet to place the AGW in |
+
+### flux
+
+```yaml
+flux = {
+  enabled       = true
+  release_train = "stable"
+  version       = "v1.6.1"
+}
+```
+
+> Note: At this time `flux` only controls if flux is installed or not, it does NOT configure flux to consume a repository. This was done as the settings are bespoke enough that including it preconfigured is too limiting. You can use [azurerm_kubernetes_flux_configuration](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/kubernetes_flux_configuration) to configure the settings as needed.
+
+This block defines Flux installation.
+
+| name | type | required | default | description |
+| --- | --- | --- | --- | --- |
+| enabled | bool | no | true | enables installation of Flux extension |
+| release_train | string | no | null | Release train used. Accepted values are `stable`, `preview`. |
+| version | string | no | null | User-specified version to pin to. |
 
 ### waf_configuration
 

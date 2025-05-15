@@ -38,6 +38,20 @@ variable "app_gateway" {
   }
 }
 
+variable "flux" {
+  description = "This block defines flux extension installation settings"
+  type = object({
+    enabled       = optional(bool, true)
+    release_train = optional(string)
+    version       = optional(string)
+  })
+
+  validation {
+    condition     = var.flux.release_train == null ? true : contains(["stable", "preview"], var.flux.release_train)
+    error_message = "Valid values for release_train are 'stable', 'preview'."
+  }
+}
+
 variable "waf_configuration" {
   type = object({
     enabled                  = optional(bool, true)
@@ -98,7 +112,7 @@ variable "node_user_pool" {
       max_surge                     = string
       node_soak_duration_in_minutes = optional(number, 0)
     }))
-    vm_size              = optional(string, "Standard_D4ds_v5")
+    vm_size = optional(string, "Standard_D4ds_v5")
   })
   description = "node user pool for aks"
   default     = {}
@@ -184,13 +198,6 @@ variable "name_prefix" {
   description = "the prefix used in any generated resource name, if no overriding name is specified"
   nullable    = false
   default     = "aks-baseline"
-}
-
-variable "flux_enabled" {
-  type        = bool
-  description = "install and enable Flux"
-  nullable    = false
-  default     = true
 }
 
 variable "resource_group_name" {
