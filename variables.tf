@@ -64,7 +64,12 @@ variable "node_default_pool" {
     os_disk_size_gb              = optional(number, 70)
     os_disk_type                 = optional(string, "Ephemeral")
     os_sku                       = optional(string, null)
-    vm_size                      = optional(string, "Standard_D2ds_v5")
+    upgrade_settings = optional(object({
+      drain_timeout_in_minutes      = optional(number, 0)
+      max_surge                     = string
+      node_soak_duration_in_minutes = optional(number, 0)
+    }))
+    vm_size = optional(string, "Standard_D2ds_v5")
   })
   description = "node default system pool for aks"
   default     = {}
@@ -88,6 +93,11 @@ variable "node_user_pool" {
     os_type              = optional(string, "Linux")
     priority             = optional(string, "Regular")
     spot_max_price       = optional(number, -1)
+    upgrade_settings = optional(object({
+      drain_timeout_in_minutes      = optional(number, 0)
+      max_surge                     = string
+      node_soak_duration_in_minutes = optional(number, 0)
+    }))
     vm_size              = optional(string, "Standard_D4ds_v5")
   })
   description = "node user pool for aks"
@@ -174,6 +184,13 @@ variable "name_prefix" {
   description = "the prefix used in any generated resource name, if no overriding name is specified"
   nullable    = false
   default     = "aks-baseline"
+}
+
+variable "flux_enabled" {
+  type        = bool
+  description = "install and enable Flux"
+  nullable    = false
+  default     = true
 }
 
 variable "resource_group_name" {

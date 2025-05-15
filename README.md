@@ -8,7 +8,7 @@ Unlike the the complete topology example that includes the required hub-and-spok
 |-----------------------------------------|-------|----------|
 | Virtual Network hub-and-spoke           |  ✅   |    ❌    |
 | Egress restriction using Azure Firewall |  ✅   |    ❌    |
-| Fluxv2 integration*                     |  ✅   |    ❌    |
+| Fluxv2 integration*                     |  ✅   |    ✅    |
 | Azure Networking CNI                    |  ✅   |    ✅    |
 | Azure Active Directory Pod Identity     |  ✅   |    ✅    |
 | Default Recomended Node config          |  ✅   |    ✅    |
@@ -18,7 +18,7 @@ Unlike the the complete topology example that includes the required hub-and-spok
 | Azure Policy enabled                    |  ✅   |    ✅    |
 | Managed public IP option                |  ❌   |    ✅    |
 
-> Note: At this time `azurerm_kubernetes_cluster` does not have the ability to configure the Fluxv2 integration. This means the Traefik controller and other worklods that are normally deployed automatically as part of the bootsrap process in the example baseline doesn't occur in this module. The issue has been opened and [is being tracked here](https://github.com/hashicorp/terraform-provider-azurerm/issues/15011)
+> Note: At this time `flux_enabled` boolean only toggles if flux is installed or not, it does NOT configure flux to consume a repository. This was done as the settings are bespoke enough that including it preconfigured is too limiting. You can use [azurerm_kubernetes_flux_configuration](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/kubernetes_flux_configuration) to configure the settings as needed.
 
 Each recomended integration is bundled into its own custom object block so it can be enabled/disabled as needed.  For example:
 
@@ -116,7 +116,7 @@ The node default pool refers to the system pool for AKS, following the recomende
 
 ```yaml
 node_default_pool = {
-  enable_auto_scaling          = true
+  auto_scaling_enabled         = true
   max_count                    = 4
   min_count                    = 3
   name                         = "system"
@@ -130,7 +130,7 @@ node_default_pool = {
 
 | name | type | required | default | description |
 | --- | --- | --- | --- | --- |
-| enable_auto_scaling | bool | no | true | enables auto-scaling |
+| auto_scaling_enabled | bool | no | true | enables auto-scaling |
 | max_count | number | no | 4 | max number of nodes |
 | min_count | number | no | 3 | minimum number of nodes |
 | name | string | no | "system" | sets the name of the default node pool |
@@ -140,6 +140,7 @@ node_default_pool = {
 | os_disk_size_gb | number | no | 70 | size of node disks in GB |
 | os_disk_type | string | no | "Ephemeral" | type of disk |
 | os_sku | string | no | null | Specifies the OS SKU used by the agent pool. Possible values include: `AzureLinux`, `Ubuntu`, `Windows2019`, `Windows2022` |
+| upgrade_settings | object | no | null | Applies default upgrade settings to nodes. See [here](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/kubernetes_cluster_node_pool#upgrade_settings-2) for details |
 | vm_size | string | no | "Standard_D2ds_v5" | set the node type |
 
 ### node_user_pool
@@ -184,6 +185,7 @@ node_user_pool = {
 | os_sku | string | no | null | Specifies the OS SKU used by the agent pool. Possible values include: `AzureLinux`, `Ubuntu`, `Windows2019`, `Windows2022` |
 | os_type | string | no | "Linux" | the type of OS to run. As of this writing, supported types are `Windows` `Linux` |
 | priority | string | no | "Regular" | the type of nodes |
+| upgrade_settings | object | no | null | Applies default upgrade settings to nodes. See [here](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/kubernetes_cluster_node_pool#upgrade_settings-2) for details |
 | spot_max_price | number | no | -1 | used with spot instances, set a price limit on server cost, -1 means no limit |
 | vm_size | string | no | "Standard_D4ds_v5" | set the node type |
 
@@ -231,7 +233,3 @@ tags = {
 ```
 
 Map of tags to apply to every resource that is created.
-
-## Outputs
-
-Comming soon

@@ -1,36 +1,19 @@
-# output "client_key" {
-#     value = azurerm_kubernetes_cluster.k8s.kube_config.0.client_key
-# }
+output "cluster" {
+  value = {
+    fqdn               = try(azurerm_kubernetes_cluster.main.fqdn, null)
+    id                 = azurerm_kubernetes_cluster.main.id
+    kubernetes_version = azurerm_kubernetes_cluster.main.kubernetes_version
+    name               = azurerm_kubernetes_cluster.main.name
+    portal_fqdn        = try(azurerm_kubernetes_cluster.main.portal_fqdn, null)
+    private_fqdn       = try(azurerm_kubernetes_cluster.main.private_fqdn, null)
+  }
+  description = "All attributes related to the cluster resource (id, fqdn, etc)."
+}
 
-# output "client_certificate" {
-#     value = azurerm_kubernetes_cluster.k8s.kube_config.0.client_certificate
-# }
-
-# output "cluster_ca_certificate" {
-#     value = azurerm_kubernetes_cluster.k8s.kube_config.0.cluster_ca_certificate
-# }
-
-# output "cluster_username" {
-#     value = azurerm_kubernetes_cluster.k8s.kube_config.0.username
-# }
-
-# output "cluster_password" {
-#     value = azurerm_kubernetes_cluster.k8s.kube_config.0.password
-# }
-
-# output "kube_config" {
-#     value = azurerm_kubernetes_cluster.k8s.kube_config_raw
-#     sensitive = true
-# }
-
-# output "host" {
-#     value = azurerm_kubernetes_cluster.k8s.kube_config.0.host
-# }
-
-# output "identity_resource_id" {
-#     value = azurerm_user_assigned_identity.testIdentity.id
-# }
-
-# output "identity_client_id" {
-#     value = azurerm_user_assigned_identity.testIdentity.client_id
-# }
+output "app_gateway" {
+  value = {
+    id   = try(azurerm_application_gateway.main[0].id, null)
+    name = try(azurerm_application_gateway.main[0].name, null)
+  }
+  description = "All attributes related to the application gateway (id, name)."
+}
