@@ -85,8 +85,7 @@ The module actually specifically defines the AGW and components as a seperate re
 ```yaml
 flux = {
   enabled       = true
-  release_train = "stable"
-  version       = "v1.6.1"
+  release_train = "Stable"
 }
 ```
 
@@ -97,7 +96,7 @@ This block defines Flux installation.
 | name | type | required | default | description |
 | --- | --- | --- | --- | --- |
 | enabled | bool | no | true | enables installation of Flux extension |
-| release_train | string | no | null | Release train used. Accepted values are `stable`, `preview`. |
+| release_train | string | no | null | Release train used. Accepted values are `Stable`, `Preview`. |
 | version | string | no | null | User-specified version to pin to. |
 
 ### waf_configuration
