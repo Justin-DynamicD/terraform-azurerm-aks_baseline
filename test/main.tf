@@ -88,6 +88,9 @@ module "aks" {
   name_prefix         = "testaks"
   resource_group_name = azurerm_resource_group.test.name
   subnet_id           = module.myvnet.vnet_subnets["aks_nodes"].id
+  flux = {
+    enabled = true
+  }
   app_gateway = {
     enabled    = true
     subnet_id  = module.myvnet.vnet_subnets["agw"].id
@@ -116,4 +119,16 @@ module "aks" {
     Terraform = true
   }
   zones = ["1", "2", "3"]
+}
+
+output "cluster" {
+  value = module.aks.cluster
+}
+
+output "app_gateway" {
+  value = module.aks.app_gateway
+}
+
+output "flux" {
+  value = module.aks.flux
 }

@@ -38,6 +38,20 @@ variable "app_gateway" {
   }
 }
 
+variable "flux" {
+  description = "This block defines flux extension installation settings"
+  type = object({
+    enabled       = optional(bool, true)
+    release_train = optional(string)
+    version       = optional(string)
+  })
+
+  validation {
+    condition     = var.flux.release_train == null ? true : contains(["Stable", "Preview"], var.flux.release_train)
+    error_message = "Valid values for release_train are 'Stable', 'Preview'."
+  }
+}
+
 variable "waf_configuration" {
   type = object({
     enabled                  = optional(bool, true)
@@ -64,7 +78,12 @@ variable "node_default_pool" {
     os_disk_size_gb              = optional(number, 70)
     os_disk_type                 = optional(string, "Ephemeral")
     os_sku                       = optional(string, null)
-    vm_size                      = optional(string, "Standard_D2ds_v5")
+    upgrade_settings = optional(object({
+      drain_timeout_in_minutes      = optional(number, 0)
+      max_surge                     = string
+      node_soak_duration_in_minutes = optional(number, 0)
+    }))
+    vm_size = optional(string, "Standard_D2ds_v5")
   })
   description = "node default system pool for aks"
   default     = {}
@@ -88,7 +107,12 @@ variable "node_user_pool" {
     os_type              = optional(string, "Linux")
     priority             = optional(string, "Regular")
     spot_max_price       = optional(number, -1)
-    vm_size              = optional(string, "Standard_D4ds_v5")
+    upgrade_settings = optional(object({
+      drain_timeout_in_minutes      = optional(number, 0)
+      max_surge                     = string
+      node_soak_duration_in_minutes = optional(number, 0)
+    }))
+    vm_size = optional(string, "Standard_D4ds_v5")
   })
   description = "node user pool for aks"
   default     = {}

@@ -44,6 +44,13 @@ resource "azurerm_kubernetes_cluster" "main" {
     vm_size                      = local.node_default_pool.vm_size
     vnet_subnet_id               = local.subnet_id
     zones                        = local.zones != [] ? local.zones : null
+
+    # if unset in the default block, it will set itself so we mirror that to avoid unessisary drift detection
+    upgrade_settings {
+      drain_timeout_in_minutes      = try(local.node_default_pool.upgrade_settings.drain_timeout_in_minutes, 0)
+      max_surge                     = try(local.node_default_pool.upgrade_settings.max_surge, "10%")
+      node_soak_duration_in_minutes = try(local.node_default_pool.upgrade_settings.node_soak_duration_in_minutes, 0)
+    }
   }
   identity {
     type         = "UserAssigned"
@@ -83,4 +90,15 @@ resource "azurerm_kubernetes_cluster_node_pool" "user" {
   vm_size               = local.node_user_pool.vm_size
   vnet_subnet_id        = local.subnet_id # must be defined or terraform will redeploy despite documentation stating optional
   zones                 = local.zones != [] ? local.zones : null
+
+  dynamic "upgrade_settings" {
+    for_each = local.node_user_pool.upgrade_settings != null ? [local.node_user_pool.upgrade_settings] : []
+
+    content {
+      drain_timeout_in_minutes      = upgrade_settings.value.drain_timeout_in_minutes
+      max_surge                     = upgrade_settings.value.max_surge
+      node_soak_duration_in_minutes = upgrade_settings.value.node_soak_duration_in_minutes
+    }
+  }
+
 }
