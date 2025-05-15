@@ -22,7 +22,7 @@ output "flux" {
   value = {
     id            = try(azurerm_kubernetes_cluster_extension.flux[0].id, null)
     release_train = try(azurerm_kubernetes_cluster_extension.flux[0].release_train, null)
-    version       = try(azurerm_kubernetes_cluster_extension.flux[0].version, null)
+    version       = try(azurerm_kubernetes_cluster_extension.flux[0].current_version, null)
   }
   description = "Flux installation information."
 }
