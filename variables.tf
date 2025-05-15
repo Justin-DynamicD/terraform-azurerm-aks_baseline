@@ -47,8 +47,8 @@ variable "flux" {
   })
 
   validation {
-    condition     = var.flux.release_train == null ? true : contains(["stable", "preview"], var.flux.release_train)
-    error_message = "Valid values for release_train are 'stable', 'preview'."
+    condition     = var.flux.release_train == null ? true : contains(["Stable", "Preview"], var.flux.release_train)
+    error_message = "Valid values for release_train are 'Stable', 'Preview'."
   }
 }
 
